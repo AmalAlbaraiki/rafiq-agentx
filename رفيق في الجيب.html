@@ -1,0 +1,918 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>رفيق في الجيب</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Readex+Pro:wght@500;600;700&display=swap">
+<style>
+/* Layout: one phone-sized app in a stage; on phones it fills the screen. Presenter panel beside it on desktop. */
+:root{
+  --navy:#3F5574; --ink:#22324A; --navy2:#4E6687; --sky:#B8CEE0; --mist:#DCE8F1;
+  --paper:#EFF0EA; --card:#F8F8F4; --sand:#D6C6A9; --muted:#5A6878; --line:#D4DAE0;
+  --grad:linear-gradient(135deg,#4E6687,#3F5574 55%,#22324A);
+  --shadow:0 14px 28px -14px rgba(34,50,74,.55);
+  --soft:0 8px 22px -14px rgba(34,50,74,.45);
+  --display:'Readex Pro',Tahoma,sans-serif; --body:'IBM Plex Sans Arabic',Tahoma,sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:#D9E2EA;color:var(--ink);font-family:var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box}
+*{box-sizing:border-box}
+button{font-family:inherit;color:inherit;cursor:pointer;margin:0}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sand);outline-offset:3px}
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:28px;padding-block:24px}
+.phone{width:390px;height:844px;max-height:calc(100vh - 48px);border-radius:52px;border:10px solid var(--ink);background:var(--paper);overflow:hidden;position:relative;box-shadow:0 40px 80px -30px rgba(34,50,74,.6);flex:none}
+#app{height:100%;position:relative}
+@media (max-width:560px){
+  body{padding:0;background:var(--paper)}
+  .stage{padding:0;display:block;height:100%}
+  .phone{width:100%;height:100%;max-height:none;border:0;border-radius:0;box-shadow:none}
+  .panel{display:none}.panel.open{display:flex}
+  body.demo .panelBtn{display:flex!important}
+}
+/* screens */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;background:var(--paper)}
+.scr.dark{background:var(--navy);color:#fff}
+.pad{padding-inline:20px}
+.grow{flex:1}
+h1,h2{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance}
+h1{font-size:30px;line-height:1.25}
+h1:focus{outline:none}
+.sub{margin:0;font-size:16px;color:var(--muted);line-height:1.6}
+.dark .sub{color:var(--mist)}
+.btn{white-space:nowrap;min-height:62px;border:none;border-radius:20px;font-family:var(--display);font-size:19px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 16px;width:100%}
+.btn-pri{background:var(--grad);color:#fff;box-shadow:var(--shadow)}
+.btn-out{background:transparent;border:2px solid var(--navy);color:var(--navy)}
+.btn-soft{background:var(--mist);color:var(--ink)}
+.btn-help{background:var(--sand);color:var(--ink);box-shadow:var(--shadow);font-size:20px;font-weight:700}
+.btn-light{background:var(--mist);color:var(--ink)}
+.btn small{font-family:var(--body);font-size:13px;font-weight:500}
+.card{background:var(--card);border-radius:22px;box-shadow:var(--soft)}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.row{display:flex;align-items:center;gap:12px}
+.col{display:flex;flex-direction:column}
+.tile{width:46px;height:46px;border-radius:15px;background:var(--mist);display:flex;align-items:center;justify-content:center;flex:none}
+.bigbtn{border:none;border-radius:24px;min-height:80px;display:flex;align-items:center;gap:14px;padding:0 16px;text-align:right;width:100%}
+.opt{border:2px solid transparent;border-radius:22px;background:var(--card);display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:right;width:100%;font-size:19px;font-weight:600;transition:border-color .2s,box-shadow .2s;box-shadow:var(--soft)}
+.opt[aria-pressed="true"]{border-color:var(--navy);box-shadow:var(--soft),0 0 0 4px rgba(184,206,224,.6)}
+.opt .ti{width:52px;height:52px;border-radius:16px;background:var(--mist);display:flex;align-items:center;justify-content:center;flex:none}
+.opt[aria-pressed="true"] .ti{background:var(--grad)}
+.hdr{background:var(--grad);color:#fff;border-radius:0 0 36px 36px;flex:none;box-shadow:var(--shadow)}
+.sky{position:relative;flex:none;overflow:hidden;border-radius:0 0 36px 36px}
+.sky .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(34,50,74,.92) 0%,rgba(34,50,74,.55) 45%,rgba(34,50,74,0) 75%)}
+.opt .chk{margin-inline-start:auto;opacity:0}
+.opt[aria-pressed="true"] .chk{opacity:1}
+.top{padding:22px 20px 0}
+.back{width:48px;height:48px;border-radius:16px;border:none;background:var(--card);box-shadow:var(--soft);display:flex;align-items:center;justify-content:center}
+.dark .back{background:rgba(220,232,241,.15);box-shadow:none}
+.bars{display:inline-flex;gap:3px;align-items:center;height:16px}
+.bars i{width:3px;border-radius:2px;background:currentColor;animation:bar 1s ease-in-out infinite}
+.bars i:nth-child(1){height:6px}.bars i:nth-child(2){height:14px;animation-delay:.15s}.bars i:nth-child(3){height:9px;animation-delay:.3s}.bars i:nth-child(4){height:16px;animation-delay:.45s}.bars i:nth-child(5){height:7px;animation-delay:.6s}
+@keyframes bar{50%{transform:scaleY(.4)}}
+.pulse{animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(184,206,224,.9)}100%{box-shadow:0 0 0 22px rgba(184,206,224,0)}}
+.fade{animation:fade .35s ease-out}
+@keyframes fade{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bubble{max-width:84%;border-radius:20px;padding:10px 14px;font-size:16px;line-height:1.6}
+.b-r{align-self:flex-start;background:var(--card);box-shadow:var(--soft);border-end-start-radius:6px}
+.b-u{align-self:flex-end;background:var(--grad);color:#fff;border-end-end-radius:6px;display:flex;align-items:center;gap:8px}
+.b-u .bars{color:var(--sky)}
+.tag{font-size:13px;background:var(--card);border-radius:999px;padding:3px 11px}
+.field{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:8px 14px;min-height:62px}
+.field:focus-within{border-color:var(--navy);box-shadow:0 0 0 4px rgba(184,206,224,.55)}
+.field input{border:none;background:transparent;font:500 17px var(--body);color:var(--ink);width:100%;padding:2px 0;outline:none}
+.field label{font-size:12px;font-weight:600;color:var(--navy)}
+/* overlays */
+.ov{position:absolute;inset:0;background:rgba(34,50,74,.45);display:flex;align-items:flex-end;z-index:20;animation:fadeo .25s}
+@keyframes fadeo{from{opacity:0}}
+.sheet{background:var(--paper);width:100%;border-radius:32px 32px 0 0;padding:12px 20px 28px;display:flex;flex-direction:column;gap:12px;animation:up .3s ease-out;max-height:92%;overflow-y:auto}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.grab{width:44px;height:5px;border-radius:3px;background:var(--line);align-self:center}
+.hap{position:absolute;inset:0;pointer-events:none;z-index:30;border-radius:inherit;animation:hap .9s ease-out}
+@keyframes hap{0%{box-shadow:inset 0 0 0 0 rgba(214,198,169,.0)}25%{box-shadow:inset 0 0 0 14px rgba(214,198,169,.95)}100%{box-shadow:inset 0 0 0 0 rgba(214,198,169,0)}}
+.hapchip{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:31;background:var(--ink);color:#fff;font-size:14px;font-weight:600;border-radius:999px;padding:7px 14px;display:flex;gap:8px;align-items:center;animation:fade .3s;white-space:nowrap}
+.toast{position:absolute;bottom:24px;left:20px;right:20px;z-index:25;background:var(--ink);color:#fff;border-radius:18px;padding:14px 16px;font-size:15px;animation:fade .3s}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.arrow{}
+/* presenter panel */
+.panel{width:280px;background:var(--card);border-radius:28px;box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:12px;align-self:center;max-height:calc(100vh - 48px);overflow-y:auto}
+.panel h2{font-size:18px}
+#blank[hidden],#listenBar[hidden]{display:none!important}
+#listenBar{position:absolute;left:14px;right:14px;bottom:18px;z-index:45;background:#22324A;color:#fff;border-radius:22px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 18px 40px -12px rgba(0,0,0,.5);animation:fade .2s}
+#listenBar .lm{width:40px;height:40px;border-radius:50%;background:#D6C6A9;flex:none;display:flex;align-items:center;justify-content:center}
+#listenBar .lm::after{content:'';width:12px;height:12px;border-radius:50%;background:#22324A}
+#listenBar .lt{flex:1;font-size:16px;line-height:1.5;min-width:0}
+#listenBar button{border:none;background:#DCE8F1;color:#22324A;border-radius:14px;min-height:44px;padding:0 14px;font-weight:700;font-family:inherit}
+#blank{position:absolute;inset:0;z-index:40;background:#0E141D;color:#B8CEE0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;padding:0 24px 48px;text-align:center;pointer-events:none}
+#blank .bl1{font-family:var(--display);font-size:15px;font-weight:600;opacity:.6}#blank .bl2{font-size:13px;opacity:.5}#blank #blankCap{font-size:15px;color:#DCE8F1;opacity:.75;min-height:24px;margin-top:10px;line-height:1.6}
+.vsel{width:100%;min-height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);font:500 14px var(--body);color:var(--ink);padding:0 10px}
+.vbox{background:var(--paper);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;font-size:14px;line-height:1.6;min-height:64px}
+.vbox .vlab{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.2px}
+.vbox[data-on="1"]{background:var(--mist)}
+#vstate b{color:var(--ink)}
+#vstate[data-s="noar"],#vstate[data-s="none"],#vstate[data-s="blocked"]{background:#F3EBDD;border:1px solid var(--sand);border-radius:12px;padding:8px 10px;color:var(--ink)}
+.panel .note{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0}
+.jump{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.jump button{border:1px solid var(--line);background:var(--paper);border-radius:12px;min-height:40px;font-size:13.5px;font-weight:600}
+.jump button[aria-current="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;font-weight:600;border:none;background:none;padding:6px 0;width:100%;text-align:right}
+.sw span.k{width:46px;height:28px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.sw span.k::after{content:"";position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:right .2s}
+.sw[aria-checked="true"] span.k{background:var(--navy)}
+.sw[aria-checked="true"] span.k::after{right:21px}
+.panelBtn{display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:50%;transform:translateX(-50%);z-index:50;border:none;background:var(--ink);color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:600;opacity:.85}
+@media (max-width:560px){.panel.open{position:fixed;inset:auto 0 0 0;width:100%;border-radius:28px 28px 0 0;z-index:60;max-height:75%;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="stage" dir="rtl" lang="ar">
+  <div class="phone"><div id="app" aria-live="off"></div><div id="listenBar" hidden role="status"><span class="lm pulse"></span><span class="lt">أسمعك…</span><button type="button">خلصت</button></div><div id="blank" hidden><span class="bl1">الشاشة مطفأة</span><span class="bl2">رفيق يكمل بالصوت والاهتزاز</span><span id="blankCap"></span></div></div>
+  <aside class="panel" id="panel" aria-label="لوحة العرض">
+    <div class="col" style="gap:4px"><h2>لوحة العرض</h2><p class="note">للمقدّم أثناء الديمو. تنقّل بين المشاهد وتحكّم بالصوت.</p></div>
+    <div class="vbox" data-on="0"><span class="vlab">رفيق يقول الحين</span><span id="caption">…</span></div>
+    <p class="note" id="vstate">نتأكد من الصوت…</p>
+    <p class="note" id="mstate"></p>
+    <label class="note brv" for="voiceSel" style="font-weight:700;color:var(--ink)">صوت رفيق</label>
+    <select id="voiceSel" class="vsel brv"></select>
+    <div class="row" style="gap:8px;font-size:13px;font-weight:600"><label for="rate" style="flex:none">السرعة</label><input id="rate" type="range" min="0.75" max="1.25" step="0.05" value="1" style="flex:1;accent-color:#3F5574"><span id="rateV" style="width:34px;text-align:left">1.0</span></div>
+    <button class="btn btn-soft" id="testVoice" style="min-height:44px;font-size:15px">جرّب الصوت</button>
+    <button class="sw" id="swSound" role="switch" aria-checked="true">صوت رفيق<span class="k"></span></button>
+    <button class="sw" id="swSR" role="switch" aria-checked="false">محاكاة قارئ الشاشة (VoiceOver)<span class="k"></span></button>
+    <button class="sw" id="swBlank" role="switch" aria-checked="false">شاشة مطفأة (للعرض)<span class="k"></span></button>
+    <button class="sw" id="swAuto" role="switch" aria-checked="true">تقدّم الرحلة تلقائيًا<span class="k"></span></button>
+    <div class="jump" id="jump"></div>
+    <button class="btn btn-soft" id="nextStep" style="min-height:48px;font-size:16px">الخطوة التالية في الرحلة</button>
+    <button class="btn btn-out" id="resetAll" style="min-height:44px;font-size:15px">ابدأ من الصفر</button>
+    <p class="note">زر المايك (أو مسطرة المسافة في الكمبيوتر) يسمعك فعليًا. إذا المايك مو متاح في متصفحك، يعبّي الجملة المتوقعة بدالك. الاهتزاز يظهر كإطار حول الشاشة، ويهتز فعليًا في جوالات أندرويد.</p>
+  </aside>
+</div>
+<button dir="rtl" class="panelBtn" id="panelBtn" aria-controls="panel">لوحة العرض</button>
+<div id="live" class="sr-only" aria-live="assertive"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const app=$('#app');
+const S={screen:'start',mode:'voice',sound:true,sr:false,auto:true,login:null,gender:null,q:0,
+  profile:{},chat:0,step:0,planAlt:false,reported:false,lateMsg:false,rating:0,overlay:null,helpLevel:null};
+S.aq=0;S.mode='voice';
+
+/* ---------- voice + haptics ---------- */
+let voices=[];
+let CT=null,CTdead=false,D=null,ctSpeaking=false;
+/* speech: pick the best Arabic voice, work around Chrome's cancel/speak race, report problems */
+let arVoice=null,voiceState='checking';
+function loadVoices(){try{voices=speechSynthesis.getVoices()||[]}catch(e){voices=[]}
+  const ar=voices.filter(v=>/^ar/i.test(v.lang));
+  const score=v=>(/natural|online|neural/i.test(v.name)?10:0)+(/google/i.test(v.name)?6:0)+(/sa/i.test(v.lang)?3:0)+(/hamed|zariyah|majed|maged|tarik|laila|naayf/i.test(v.name)?2:0)+(v.localService?0:1);
+  ar.sort((a,b)=>score(b)-score(a));
+  let saved=null;try{saved=localStorage.getItem('rafiq-voice')}catch(e){}
+  arVoice=ar.find(v=>v.name===saved)||ar[0]||null;
+  const sel=document.getElementById('voiceSel');
+  if(sel){sel.innerHTML=ar.length?ar.map(v=>`<option value="${v.name}" ${arVoice&&v.name===arVoice.name?'selected':''}>${v.name.replace(/Microsoft |Google /,'')}${/natural|online|neural/i.test(v.name)?' · طبيعي':''} (${v.lang})</option>`).join(''):'<option>ما فيه أصوات عربية في هذا الجهاز</option>';sel.disabled=!ar.length}
+  if(voices.length){voiceState=arVoice?'ok':'noar'}else if(!('speechSynthesis' in window)){voiceState='none'}
+  if(CT&&!CTdead)voiceState='claude';
+  showVoiceState()}
+function showVoiceState(){const el=document.getElementById('vstate');if(!el)return;
+  el.innerHTML=voiceState==='claude'?`<b>صوت Claude شغال</b> · يشتغل على أي جهاز بدون إعداد${D?' · والمايك يسمعك فعليًا':''}`:voiceState==='ok'?`<b>الصوت جاهز</b> · ${arVoice.name}`:voiceState==='noar'?'<b>جهازك ما فيه صوت عربي.</b> افتح الرابط من متصفح Edge أو من جوال أندرويد أو آيفون، أو أضف اللغة العربية لأصوات النظام.':voiceState==='none'?'<b>المتصفح هذا ما يدعم النطق.</b> جرّب Edge أو Chrome أو Safari.':voiceState==='blocked'?'<b>المتصفح منع الصوت.</b> المس أي زر في التطبيق، وتأكد إن الجوال مو على الصامت.':'نتأكد من الصوت…';
+  el.dataset.s=voiceState}
+try{loadVoices();speechSynthesis.onvoiceschanged=loadVoices;setTimeout(loadVoices,800);setTimeout(loadVoices,2500);setTimeout(()=>{if(voiceState==='checking'&&!CT){voiceState='noar';showVoiceState()}},3200)}catch(e){voiceState='none'}
+let sayTimer=null;
+let speaking=false,curPri=0,sayQ=[];
+let sayId=0,ctId=0,startW=[],endW=[];
+function fireStart(id){startW=startW.filter(w=>{if(w.id===id){w.f();return false}return true})}
+function fireEnd(id){endW=endW.filter(w=>{if(w.id===id){w.f();return false}return true})}
+function voiceOn(){return S.sound&&!S.sr&&!(S.hushUntil&&Date.now()<S.hushUntil)}
+function whenSpeaking(cb,max){if(!voiceOn()){cb();return}let done=false;const f=()=>{if(!done){done=true;cb()}};startW.push({id:sayId,f});setTimeout(f,max||1800)}
+function whenSpoken(cb,max){if(!voiceOn()){setTimeout(cb,2500);return}let done=false;const f=()=>{if(!done){done=true;cb()}};endW.push({id:sayId,f});setTimeout(f,max||12000)}
+function say(t,pri=1){
+  S.lastSaid=t;const sid=++sayId;
+  $('#live').textContent='';setTimeout(()=>{$('#live').textContent=t},30);
+  const cap=document.getElementById('caption');if(cap){cap.textContent=t;cap.parentElement.dataset.on=S.sound&&!S.sr?'1':'0'}
+  const bc=document.getElementById('blankCap');if(bc)bc.textContent=t;
+  if(!S.sound||S.sr)return;
+  if(S.hushUntil&&Date.now()<S.hushUntil&&pri<3)return;
+  if(CT&&!CTdead){speakClaude(t,pri,sid);return}
+  const ss=window.speechSynthesis;if(!ss){voiceState='none';showVoiceState();return}
+  if(speaking&&pri<curPri){sayQ.push([t,pri]);return}
+  sayQ=[];
+  try{ss.cancel()}catch(e){}
+  clearTimeout(sayTimer);
+  sayTimer=setTimeout(()=>{try{
+    if(!voices.length)loadVoices();
+    const u=new SpeechSynthesisUtterance(t);
+    if(arVoice){u.voice=arVoice;u.lang=arVoice.lang}else u.lang='ar-SA';
+    u.rate=S.rate||1;u.pitch=1;u.volume=1;
+    u.onstart=()=>{fireStart(sid);speaking=true;curPri=pri;if(voiceState!=='ok'&&arVoice){voiceState='ok';showVoiceState()}};
+    u.onend=()=>{fireEnd(sid);speaking=false;curPri=0;const n=sayQ.shift();if(n)say(n[0],n[1])};
+    u.onerror=e=>{speaking=false;curPri=0;if(e.error==='not-allowed'){voiceState='blocked';showVoiceState()}};
+    ss.resume();ss.speak(u);
+  }catch(e){}},80);
+}
+function speakClaude(t,pri,sid){
+  const o={language:'ar',rate:S.rate||1};
+  if(ctSpeaking&&pri<curPri){CT.add(t,o).catch(()=>{});return}
+  curPri=pri;
+  ctId=sid;CT.speak(t,o).catch(e=>{const c=e&&e.code;
+    if(c==='unavailable'||c==='upstream_error'){CTdead=true;loadVoices();say(t,pri)}
+    else if(c==='not_granted'){CTdead=true;voiceState='blocked';showVoiceState()}});
+}
+function unlockVoice(){try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}
+const HAP={alert:{p:[200],t:'اهتزازة: تنبيه'},near:{p:[150,100,150],t:'اهتزازتين: المحطة قربت'},arrive:{p:[800],t:'اهتزازة طويلة: وصلتي'}};
+function haptic(k){const h=HAP[k];if(!h)return;S.lastCue=k;try{animateHaptic(k)}catch(e){}try{navigator.vibrate&&navigator.vibrate(h.p)}catch(e){}
+  const ph=$('.phone');ph.querySelectorAll('.hap,.hapchip').forEach(n=>n.remove());
+  const a=document.createElement('div');a.className='hap';ph.appendChild(a);
+  const c=document.createElement('div');c.className='hapchip';c.innerHTML=ic.vib('#fff')+h.t;ph.appendChild(c);
+  setTimeout(()=>{a.remove();c.remove()},2200)}
+function toast(t,quiet){if(!quiet&&!/^سمعتك/.test(t))say(t,1);app.querySelectorAll('.toast').forEach(n=>n.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=t;app.appendChild(d);setTimeout(()=>d.remove(),3600)}
+
+/* ---------- icons ---------- */
+const P=(d,c='#3F5574',s=24)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true"><path fill="${c}" d="${d}"/></svg>`;
+const ic={
+  mic:(c,s)=>P('M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2Z',c,s),
+  spk:(c,s)=>P('M3 10v4h4l5 4V6L7 10H3Zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4ZM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z',c,s),
+  chev:(c)=>P('M15.4 6 9.4 12l6 6-1.4 1.4L6.6 12 14 4.6z',c,22),
+  back:(c='#22324A')=>P('M8.6 6l6 6-6 6 1.4 1.4L17.4 12 10 4.6z',c,22),
+  check:(c='#3F5574',s=26)=>P('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.2 14.6-4.3-4.3 1.4-1.4 2.9 2.9 6-6 1.4 1.4-7.4 7.4Z',c,s),
+  shield:(c)=>P('M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm-1.2 14.6-3.6-3.6 1.4-1.4 2.2 2.2 5-5 1.4 1.4-6.4 6.4Z',c,22),
+  warn:(c='#22324A',s=22)=>P('M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V9h2v4Z',c,s),
+  help:(c='#22324A')=>P('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 15.2a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Zm1.3-4.6v.5h-2.4v-.7c0-1.3.8-1.9 1.5-2.4.6-.4 1-.7 1-1.3 0-.7-.6-1.2-1.4-1.2-.9 0-1.5.5-1.6 1.4H8c.1-2.1 1.7-3.4 4-3.4 2.2 0 3.8 1.3 3.8 3.1 0 1.4-.9 2.1-1.7 2.6-.5.4-.8.6-.8 1.4Z',c,24),
+  replay:(c)=>P('M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7Z',c,26),
+  vib:(c)=>`<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2" fill="none" stroke="${c}" stroke-width="2"/><path d="M4 8v8M20 8v8" stroke="${c}" stroke-width="2" stroke-linecap="round"/></svg>`,
+  ear:(c)=>P('M12 4a7 7 0 0 0-7 7v4a3 3 0 0 0 3 3h1v-7H7a5 5 0 0 1 10 0h-2v7h1a3 3 0 0 0 3-3v-4a7 7 0 0 0-7-7Z',c,16),
+  car:(c)=>P('M5 11 7 6h10l2 5h1a1 1 0 0 1 1 1v5h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-5a1 1 0 0 1 1-1h1Zm2.2 0h9.6l-1.2-3H8.4l-1.2 3Z',c,22),
+  train:(c)=>P('M12 2c-4 0-8 .5-8 4v9.5A3.5 3.5 0 0 0 7.5 19L6 20.5v.5h2.2l2-2h3.6l2 2H18v-.5L16.5 19a3.5 3.5 0 0 0 3.5-3.5V6c0-3.5-4-4-8-4ZM7.5 17a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm3.5-7H6V6h5v4Zm2 0V6h5v4h-5Zm3.5 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z',c,22),
+  walk:(c)=>P('M13.5 5.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM9.8 8.9 7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3A7.3 7.3 0 0 0 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7',c,22),
+  user:(c)=>`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="${c}" stroke-width="2"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"/></svg>`,
+  lock:(c)=>`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3" fill="none" stroke="${c}" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="${c}" stroke-width="2"/></svg>`,
+  video:(c)=>P('M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4Z',c,22),
+  people:(c)=>P('M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 2c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13Zm8 0c-.3 0-.6 0-1 .1 1.2.8 2 2 2 3.4V19h6v-2.5c0-2.3-4.7-3.5-7-3.5Z',c,22),
+  route:(c)=>P('M19 15.2V8a4 4 0 0 0-8 0v8a2 2 0 0 1-4 0V8.8a3 3 0 1 0-2 0V16a4 4 0 0 0 8 0V8a2 2 0 0 1 4 0v7.2a3 3 0 1 0 2 0Z',c,22),
+  home:(c)=>P('M12 3 2 12h3v8h5v-6h4v6h5v-8h3L12 3Z',c,20),
+  work:(c)=>P('M10 4h4v2h-4V4Zm-2 2V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4Z',c,20),
+  hosp:(c)=>P('M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2Z',c,20),
+  kbd:(c)=>`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="3" fill="none" stroke="${c}" stroke-width="2"/><path d="M7 10h2M11 10h2M15 10h2M8 14h8" stroke="${c}" stroke-width="2" stroke-linecap="round"/></svg>`,
+  lines:(c)=>`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" d="M5 6h14M5 11h14M5 16h9"/></svg>`,
+  star:(c,f)=>`<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z" fill="${f}" stroke="${c}" stroke-width="1.6" stroke-linejoin="round"/></svg>`,
+};
+const bars='<span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>';
+const logo=`<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><path d="M24 25 C24 17 8 18 8 9" fill="none" stroke="#3F5574" stroke-width="3.5" stroke-linecap="round"/><circle cx="24" cy="25" r="4" fill="#D6C6A9"/><circle cx="8" cy="8" r="4" fill="#3F5574"/></svg>`;
+
+/* ---------- illustrations ---------- */
+function skyDay(){return `<svg viewBox="0 0 358 236" width="100%" style="display:block" aria-hidden="true" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCE8F1"/><stop offset="1" stop-color="#B8CEE0"/></linearGradient><linearGradient id="tr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4E6687"/><stop offset="1" stop-color="#3F5574"/></linearGradient></defs>
+<rect width="358" height="236" fill="url(#sk)"/><circle cx="92" cy="66" r="40" fill="#EFF0EA" opacity=".75"/><circle cx="92" cy="66" r="58" fill="#EFF0EA" opacity=".25"/>
+<g fill="#3F5574" opacity=".16"><rect x="10" y="120" width="34" height="80"/><rect x="48" y="104" width="22" height="96"/><rect x="176" y="112" width="30" height="88"/><rect x="292" y="96" width="26" height="104"/><rect x="322" y="126" width="36" height="74"/></g>
+<g fill="#3F5574" opacity=".3"><rect x="70" y="132" width="40" height="68" rx="2"/><rect x="206" y="124" width="24" height="76" rx="2"/><rect x="270" y="140" width="22" height="60" rx="2"/></g>
+<g fill="#3F5574" opacity=".55"><path d="M228 200 C234 140 236 84 238 40 Q250 16 262 40 C264 84 266 140 272 200 Z"/><path d="M120 200 L141 70 L162 200 Z"/></g><line x1="141" y1="70" x2="141" y2="46" stroke="#3F5574" stroke-opacity=".55" stroke-width="2"/>
+<path d="M241 40 Q250 26 259 40 L258 72 L242 72 Z" fill="#DCE8F1"/><circle cx="141" cy="104" r="8" fill="#D6C6A9"/>
+<rect x="0" y="182" width="358" height="9" fill="#3F5574"/><g fill="#3F5574"><rect x="34" y="191" width="12" height="45"/><rect x="134" y="191" width="12" height="45"/><rect x="234" y="191" width="12" height="45"/><rect x="334" y="191" width="12" height="45"/></g>
+<g class="trainmove"><path d="M118 180 V162 Q118 152 128 152 H286 Q312 152 318 172 L320 180 Z" fill="url(#tr)"/><g fill="#DCE8F1"><rect x="132" y="159" width="26" height="12" rx="4"/><rect x="164" y="159" width="26" height="12" rx="4"/><rect x="196" y="159" width="26" height="12" rx="4"/><rect x="228" y="159" width="26" height="12" rx="4"/><path d="M266 159 H292 Q304 159 308 171 H266 Z"/></g><rect x="118" y="175" width="202" height="3" fill="#D6C6A9"/></g></svg>`}
+function skyDusk(h=340){return `<svg viewBox="0 0 390 340" width="100%" height="${h}" style="display:block" aria-hidden="true" preserveAspectRatio="xMidYMax slice"><defs><linearGradient id="du" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22324A"/><stop offset=".6" stop-color="#3F5574"/><stop offset="1" stop-color="#4E6687"/></linearGradient><radialGradient id="gl" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#D6C6A9" stop-opacity=".45"/><stop offset="1" stop-color="#D6C6A9" stop-opacity="0"/></radialGradient></defs>
+<rect width="390" height="340" fill="url(#du)"/><g fill="#DCE8F1"><circle cx="40" cy="70" r="1.4"/><circle cx="90" cy="40" r="1"/><circle cx="160" cy="62" r="1.2"/><circle cx="330" cy="150" r="1.4"/><circle cx="360" cy="196" r="1"/><circle cx="210" cy="34" r="1"/></g>
+<circle cx="78" cy="118" r="70" fill="url(#gl)"/><path d="M90 98 a22 22 0 1 0 0 40 a17 17 0 1 1 0 -40 Z" fill="#D6C6A9" opacity=".9"/>
+<g fill="#4E6687" opacity=".7"><rect x="0" y="210" width="40" height="80"/><rect x="44" y="190" width="26" height="100"/><rect x="186" y="200" width="34" height="90"/><rect x="310" y="182" width="30" height="108"/><rect x="344" y="214" width="46" height="76"/></g>
+<g fill="#22324A"><path d="M246 290 C252 222 254 158 257 108 Q270 82 283 108 C286 158 288 222 294 290 Z"/><path d="M120 290 L144 150 L168 290 Z"/><rect x="76" y="226" width="40" height="64" rx="2"/><rect x="222" y="214" width="22" height="76" rx="2"/><rect x="296" y="232" width="24" height="58" rx="2"/></g>
+<line x1="144" y1="150" x2="144" y2="122" stroke="#22324A" stroke-width="2.5"/><path d="M261 108 Q270 92 279 108 L278 144 L262 144 Z" fill="#4E6687"/><circle cx="144" cy="188" r="9" fill="#D6C6A9"/>
+<g fill="#D6C6A9" opacity=".8"><rect x="84" y="236" width="4" height="5"/><rect x="96" y="250" width="4" height="5"/><rect x="104" y="236" width="4" height="5"/><rect x="228" y="226" width="4" height="5"/><rect x="236" y="244" width="4" height="5"/><rect x="302" y="244" width="4" height="5"/><rect x="264" y="180" width="3" height="4"/><rect x="272" y="212" width="3" height="4"/></g>
+<rect x="0" y="268" width="390" height="10" fill="#22324A"/><g fill="#22324A"><rect x="40" y="278" width="12" height="62"/><rect x="150" y="278" width="12" height="62"/><rect x="260" y="278" width="12" height="62"/><rect x="370" y="278" width="12" height="62"/></g>
+<g class="trainmove"><path d="M150 266 V248 Q150 238 160 238 H326 Q352 238 358 258 L360 266 Z" fill="#B8CEE0"/><g fill="#D6C6A9"><rect x="164" y="245" width="26" height="11" rx="4"/><rect x="196" y="245" width="26" height="11" rx="4"/><rect x="228" y="245" width="26" height="11" rx="4"/><rect x="260" y="245" width="26" height="11" rx="4"/></g><path d="M298 245 H332 Q344 245 348 256 H298 Z" fill="#3F5574"/></g></svg>`}
+
+/* metro-line progress: stations right→left */
+/* metro-line progress, stations right→left (same drawing as the design board) */
+function metro(labels,cur,dark,train,suffix){
+  const n=labels.length,W=346,a=318,b=28,xs=labels.map((_,i)=>a-i*(a-b)/(n-1));
+  const base=dark?'#4E6687':'#B8CEE0',done=dark?'#B8CEE0':'#3F5574',cy=train?34:30,H=train?48:44;
+  const lab=labels.map((l,i)=>suffix?l+(i<cur?' (تم)':i===cur?' (الحين)':''):l);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="المرحلة ${cur+1} من ${n}: ${labels[cur]}"><line x1="${b}" y1="${cy}" x2="${a}" y2="${cy}" stroke="${base}" stroke-width="5" stroke-linecap="round"/>`;
+  if(cur>0)s+=`<line x1="${xs[cur]}" y1="${cy}" x2="${a}" y2="${cy}" stroke="${done}" stroke-width="5" stroke-linecap="round"/>`;
+  xs.forEach((x,i)=>{
+    if(i<cur)s+=`<circle cx="${x}" cy="${cy}" r="12" fill="${done}"/><path d="M${x-5} ${cy} l3.5 3.5 7 -7" stroke="${dark?'#3F5574':'#fff'}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    else if(i===cur)s+=dark?`<circle cx="${x}" cy="${cy}" r="15" fill="#B8CEE0" opacity=".3"/><circle cx="${x}" cy="${cy}" r="11" fill="#F8F8F4"/><circle cx="${x}" cy="${cy}" r="5" fill="#3F5574"/>`:`<circle cx="${x}" cy="${cy}" r="15" fill="#3F5574"/><circle cx="${x}" cy="${cy}" r="9" fill="#F8F8F4"/><circle cx="${x}" cy="${cy}" r="4.5" fill="#3F5574"/>`;
+    else s+=`<circle cx="${x}" cy="${cy}" r="11" fill="${dark?'#3F5574':'#F8F8F4'}" stroke="#B8CEE0" stroke-width="4"/>`;
+  });
+  if(train)s+=`<g class="mtrain" data-x="${xs[cur]-24}" transform="translate(${xs[cur]-24} 0)"><rect width="48" height="16" rx="7" fill="#D6C6A9"/><rect x="5" y="4" width="9" height="6" rx="2" fill="#3F5574"/><rect x="18" y="4" width="9" height="6" rx="2" fill="#3F5574"/><path d="M31 4 H39 Q43 4 42 8 L41 10 H31 Z" fill="#3F5574"/></g>`;
+  s+='</svg><div style="position:relative;height:20px;font-size:13px">';
+  xs.forEach((x,i)=>{const pos=i===0?'right:0':i===n-1?'left:0':`left:${x/W*100}%;transform:translateX(-50%)`;s+=`<span style="position:absolute;${pos};white-space:nowrap;${i===cur?'font-weight:700;':''}color:${dark?(i===cur?'#fff':'#DCE8F1'):(i===cur?'#22324A':'#5A6878')}">${lab[i]}</span>`});
+  return s+'</div>';
+}
+
+/* ---------- trip script (same story as the board) ---------- */
+const LEGS=['التوصيل','المحطة','القطار','الوجهة'];
+const STEPS=[
+ {leg:0,place:'قدام البيت',dir:90,clock:3,big:'السيارة على يمينك',sub:'5 خطوات · السائق يعرف اسمك وبيناديك',hint:'السيارة واقفة جنب الرصيف، والباب الخلفي قدامك',hap:'alert'},
+ {leg:0,place:'في السيارة',dir:0,clock:12,big:'اركبي، السائق يعرف وجهتك',sub:'نوصل محطة الربيع بعد 6 دقائق',hap:null},
+ {leg:1,place:'محطة الربيع',dir:0,clock:12,big:'الباب قدامك',sub:'بعد 8 خطوات · المدخل الجنوبي',hap:'alert'},
+ {leg:1,place:'محطة الربيع',dir:90,clock:3,big:'المصعد على يمينك',sub:'3 خطوات · الزر على يسار الباب، فيه برايل',hint:'امشي مع الجدار اللي على يمينك لين تحسين باب المصعد',hap:'alert'},
+ {leg:1,place:'الرصيف',dir:0,clock:12,big:'قفي عند الباب 4',sub:'علامة بارزة تحت رجلك · القطار بعد دقيقتين',hap:'alert'},
+ {leg:2,place:'المسار الأصفر',dir:0,clock:12,big:'القطار وصل، الباب قدامك',sub:'ادخلي، المقعد المخصص على يمينك',hap:'alert'},
+ {leg:2,place:'المسار الأصفر',dir:null,big:'باقي 3 محطات',sub:'ارتاحي، بننبهك قبل محطتك',hap:null},
+ {leg:2,place:'المسار الأصفر',dir:null,big:'محطتك الجاية، استعدي',sub:'المركز المالي · الباب يفتح على يمينك',hap:'near'},
+ {leg:2,place:'محطة المركز المالي',dir:90,clock:3,big:'وصلتي، انزلي',sub:'الباب على يمينك',hint:'انتبهي للفراغ بين القطار والرصيف، خطوة واسعة شوي',hap:'arrive'},
+ {leg:3,place:'محطة المركز المالي',dir:null,big:'انتبهي: مصعد المخرج 1 معطل',sub:'عرفت قبل ما توصلين له · غيّرت طريقك',hap:'alert',agentAlert:true},
+ {leg:3,place:'محطة المركز المالي',dir:90,clock:3,big:'مصعد المخرج 3 على يمينك',sub:'بعد 20 خطوة',hint:'امشي على البلاط الإرشادي، وبتسمعين صوت المصعد قبل ما توصلين',hap:'alert',checkin:true},
+ {leg:3,place:'المخرج 3',dir:0,clock:12,big:'امشي قدام 40 خطوة',sub:'الرصيف على يسارك · بلاط إرشادي تحتك',hap:null,ride:{big:'السيارة على يمينك',sub:'عند المخرج 3 · توصلك للدوام',dir:90,clock:3}},
+ {leg:3,place:'الدوام',dir:0,clock:12,big:'وصلتي الدوام',sub:'المدخل الرئيسي قدامك',hap:'arrive',end:true},
+];
+const step=()=>{const st=STEPS[S.step];return st.ride&&S.exitRide?{...st,...st.ride}:st};
+const eta=()=>S.replanned?(S.exitRide?'7:56':'7:58'):'7:50';
+
+/* ---------- shared pieces ---------- */
+const V={};
+const tile=(svg,bg='var(--mist)',s=46,r=15)=>`<span class="tile" style="width:${s}px;height:${s}px;border-radius:${r}px;background:${bg}">${svg}</span>`;
+const helpBtn=()=>`<button class="btn btn-help" data-act="help" style="min-height:66px;flex:1;font-size:19px;padding:0 10px">${ic.help()}اطلبي مساعدة</button>`;
+const topBar=(back,title)=>`<div class="top row" style="justify-content:space-between">${back?`<button class="back" data-go="${back}" aria-label="رجوع">${ic.back()}</button>`:'<span style="width:48px"></span>'}<span style="font-family:var(--display);font-weight:600;font-size:17px">${title}</span>${soundBtn(false)}</div>`;
+const backBtn=(go,act)=>`<button class="back" ${act?`data-act="${act}"`:`data-go="${go}"`} aria-label="رجوع" style="background:rgba(220,232,241,.16);box-shadow:none">${ic.back('#fff')}</button>`;
+const flag=c=>P('M5 3h2v18H5V3Zm4 1h10l-2 4 2 4H9V4Z',c,22);
+const xI=c=>P('M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z',c,22);
+const pin=c=>P('M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z',c,20);
+const info=(c,s=20)=>P('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z',c,s);
+const clockI=c=>P('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 10.4V7h-2v6.2l4.6 2.8 1-1.7-3.6-1.9Z',c,22);
+const lockI=c=>P('M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1Zm2 0h6V7a3 3 0 0 0-6 0v3Z',c,20);
+const person=(c,s=36)=>P('M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 10a8 8 0 0 1 16 0H4Z',c,s);
+const tick=(c,s=24)=>P('M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7z',c,s);
+const replanI=c=>P('M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.2L13 11h7V4l-2.3 2.3Z',c,26);
+const pill=(t,bg='var(--mist)',col='var(--ink)')=>`<span class="pill" style="background:${bg};color:${col}">${t}</span>`;
+
+/* ---------- screens ---------- */
+
+/* sound toggle, on every main screen */
+const muteI=(c,s=20)=>P('M3 10v4h4l5 4V6L7 10H3Zm13.6 2 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7Z',c,s);
+const micHead=dark=>`<button data-act="listen" aria-label="كلّمي رفيق" style="border:none;width:48px;height:48px;border-radius:16px;flex:none;display:flex;align-items:center;justify-content:center;background:${dark?'rgba(220,232,241,.18)':'var(--grad)'};${dark?'':'box-shadow:var(--soft)'}">${ic.mic('#fff',22)}</button>`;
+const sndOnly=(dark)=>{const c=dark?'#fff':'#3F5574';return `<button data-act="sound" data-dark="${dark?1:0}" aria-pressed="${S.sound}" aria-label="${S.sound?'الصوت شغال، اضغطي للإيقاف':'الصوت مطفأ، اضغطي للتشغيل'}" style="border:none;width:48px;height:48px;border-radius:16px;flex:none;display:flex;align-items:center;justify-content:center;background:${dark?'rgba(220,232,241,.18)':'var(--card)'};${dark?'':'box-shadow:var(--soft)'}">${S.sound?ic.spk(c,22):muteI(dark?'#fff':'#5A6878',22)}</button>`};
+const soundBtn=dark=>`<span class="row" style="gap:8px;flex:none">${micHead(dark)}${sndOnly(dark)}</span>`;
+
+V.start=()=>`<div class="scr dark" style="background:linear-gradient(165deg,#4E6687,#3F5574 45%,#22324A)">
+ <svg width="390" height="844" viewBox="0 0 390 844" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;opacity:.16;pointer-events:none" preserveAspectRatio="xMidYMid slice"><circle cx="195" cy="360" r="120" fill="none" stroke="#B8CEE0" stroke-width="2"/><circle cx="195" cy="360" r="190" fill="none" stroke="#B8CEE0" stroke-width="2"/><circle cx="195" cy="360" r="260" fill="none" stroke="#B8CEE0" stroke-width="2"/></svg>
+ <button data-act="begin" style="flex:1;border:none;background:none;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:30px;position:relative" aria-label="المسي أي مكان في الشاشة عشان يبدأ رفيق">
+  ${S.sr?`<span class="pill" style="background:var(--mist);color:var(--ink)">${ic.check('#3F5574',16)}اكتشفنا VoiceOver تلقائيًا</span>`:''}
+  <span class="pulse" style="width:116px;height:116px;border-radius:36px;background:var(--mist);display:flex;align-items:center;justify-content:center">${logo.replace('width="32" height="32"','width="66" height="66"')}</span>
+  <span style="font-family:var(--display);font-size:44px;font-weight:700">رفيق</span>
+  <span style="font-size:20px;color:var(--mist);line-height:1.7;text-align:center">المسي أي مكان في الشاشة<br>عشان يبدأ رفيق</span>
+  <span class="pill" style="background:rgba(220,232,241,.14);color:#fff;margin-top:6px"><span style="color:var(--sand)">${bars}</span>رفيق يكلمك بالصوت طول الرحلة</span>
+ </button></div>`;
+
+V.login=()=>`<div class="scr" style="background:var(--ink)">
+ <div style="position:relative;flex:none;height:300px;overflow:hidden">${skyDusk(340)}
+  <div class="row" style="position:absolute;top:24px;right:22px;left:22px;justify-content:space-between;color:#fff"><span class="row"><span style="width:52px;height:52px;border-radius:17px;background:var(--mist);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px -8px rgba(0,0,0,.35)">${logo}</span><span class="col"><span style="font-family:var(--display);font-size:28px;font-weight:700;line-height:1.1">رفيق</span><span style="font-size:14px;color:var(--mist)">رفيقك في مترو الرياض</span></span></span>${soundBtn(true)}</div></div>
+ <div class="col grow" style="background:var(--paper);border-radius:34px 34px 0 0;margin-top:-34px;position:relative;padding:28px 22px 24px;box-shadow:0 -12px 30px -10px rgba(0,0,0,.3)">
+  <h1 tabindex="-1" style="font-size:28px">مرحبًا بك</h1><p class="sub" style="margin-top:4px">سجّل دخولك وخلّنا نبدأ رحلتك</p>
+  <button class="bigbtn" data-act="nafath" style="margin-top:20px;min-height:84px;background:var(--grad);color:#fff;box-shadow:var(--shadow)">${tile(ic.shield('#22324A'),'var(--sand)',46,14)}<span class="col grow"><span style="font-family:var(--display);font-size:21px;font-weight:600">الدخول عبر نفاذ</span><span style="font-size:14px;color:var(--mist)">أسرع وأأمن، بدون أسئلة إضافية</span></span>${ic.chev('#B8CEE0')}</button>
+  <div class="row" style="margin:18px 0;font-size:14px;color:var(--muted)"><span class="grow" style="height:1px;background:var(--line)"></span>أو بالحساب<span class="grow" style="height:1px;background:var(--line)"></span></div>
+  <form id="lf" class="col" style="gap:10px">
+   <div class="field">${ic.user('#3F5574')}<span class="col grow"><label for="un">اسم المستخدم</label><input id="un" value="noura.r" dir="ltr" style="text-align:right" autocomplete="username"></span></div>
+   <div class="field">${ic.lock('#3F5574')}<span class="col grow"><label for="pw" style="color:var(--muted)">الرمز</label><input id="pw" type="password" value="123456" autocomplete="current-password"></span></div>
+   <button class="btn btn-out" type="submit" style="margin-top:4px;min-height:58px;font-size:18px">دخول</button>
+  </form>
+  <div class="row" style="justify-content:space-between;margin-top:10px"><button style="border:none;background:none;color:var(--navy);font-weight:600;font-size:15px;min-height:44px" data-act="toast" data-v="نرسل لك رابط استعادة الرمز على جوالك">نسيت الرمز؟</button><button style="border:none;background:none;color:var(--navy);font-weight:600;font-size:15px;min-height:44px" data-act="toast" data-v="إنشاء حساب جديد: متاح في النسخة الكاملة">حساب جديد</button></div>
+ </div></div>`;
+
+const skyHead=(h,inner)=>`<div class="sky" style="height:${h}px"><div style="position:absolute;left:0;right:0;bottom:0">${skyDusk(340)}</div><div class="shade"></div>${inner}</div>`;
+const QS=[
+ {k:'aid',t:'وش وسيلتك؟',opts:[['عصا بيضاء','cane'],['كرسي متحرك','wheel'],['عكاز أو طرف صناعي','crutch'],['بدون وسيلة','none']]},
+ {k:'walk',t:'كم تقدرين تمشين؟',opts:[['أقل من 200 متر','تقريبًا 3 دقائق',1],['حتى 500 متر','تقريبًا 7 دقائق',2],['كيلو أو أكثر','15 دقيقة أو أكثر',3]]},
+ {k:'stairs',t:'تتجنبين الدرج؟',opts:[['نعم','مصاعد فقط'],['لا، عادي','الأقرب أفضل']]},
+];
+const QL=['وسيلتك','المشي','الدرج'];
+const aidIcon={cane:'<circle cx="9" cy="4" r="2" fill="C"/><path fill="none" stroke="C" stroke-width="2" stroke-linecap="round" d="M9 7v7l-2 7M9 10l4 2M13 12l6 10"/>',wheel:'<circle cx="11" cy="4" r="2" fill="C"/><path fill="none" stroke="C" stroke-width="2" stroke-linecap="round" d="M11 7v6h6l2 5M8 11a5 5 0 1 0 6 7"/>',crutch:'<circle cx="10" cy="4" r="2" fill="C"/><path fill="none" stroke="C" stroke-width="2" stroke-linecap="round" d="M10 7v7l-2 8M10 14l3 8M16 9v13M14 9h4"/>',none:'<circle cx="13" cy="4" r="2" fill="C"/><path fill="none" stroke="C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m10 22 2-7 3 3v4M9 11l3-3 3 3 3 1M12 8l-2 5"/>'};
+const qHead=(i,label,back)=>`<div class="hdr" style="padding:18px 22px 16px"><div class="row" style="justify-content:space-between">${back}<span style="font-size:15px;color:var(--mist)">${label}</span></div><div style="margin-top:10px">${metro(QL,i,true,true)}</div></div>`;
+
+/* one page: get to know you. One question at a time, answer moves on by itself */
+const ABOUT=()=>[
+ {k:'aid',t:'وش وسيلتك؟',label:'وسيلتك',opts:[['عصا بيضاء','','cane'],['كرسي متحرك','','wheel'],['عكاز أو طرف صناعي','','crutch'],['بدون وسيلة','','none']],voice:'عصا بيضاء',heard:'عصا'},
+ {k:'stairs',t:'تتجنبين الدرج؟',label:'الدرج',hint:'نختار لك المصاعد بدل الدرج في كل محطة',opts:[['نعم','مصاعد فقط','elev'],['لا، عادي','الأقرب أفضل','stairs']],voice:'لا، عادي',heard:'لا، عادي'}];
+const optIcon=(q,o,on)=>{const c=on?'#FFFFFF':'#3F5574';
+ if(q.k==='gender')return person(c,30);
+ if(q.k==='aid')return `<svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">${aidIcon[o[2]].replaceAll('C',c)}</svg>`;
+ if(q.k==='walk')return `<span style="display:flex;gap:3px;align-items:flex-end;height:30px" aria-hidden="true">${[10,20,30].map((h,i)=>`<span style="width:8px;height:${h}px;border-radius:3px;background:${i<o[2]?c:(on?'rgba(255,255,255,.35)':'#B8CEE0')}"></span>`).join('')}</span>`;
+ return o[2]==='elev'?`<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" fill="none" stroke="${c}" stroke-width="2"/><path d="M12 2v20M8 9l1.5-2L11 9M13 7l1.5 2L16 7" stroke="${c}" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`:`<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 21h5v-5h5v-5h5V6h5" fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"/></svg>`};
+V.about=()=>{
+ const Q=ABOUT(),n=Q.length,done=S.aq>=n,q=Q[Math.min(S.aq,n-1)];
+ const head=`<div class="hdr" style="padding:18px 22px 14px"><div class="row" style="justify-content:space-between">${backBtn(null,'aback')}<span style="font-family:var(--display);font-size:20px;font-weight:700">نتعرّف عليك</span>${soundBtn(true)}</div><div style="margin-top:10px">${metro(Q.map(x=>x.label),done?n-1:S.aq,true,true)}</div></div>`;
+ if(done){const tags=Q.map(x=>S.profile[x.k]).filter(Boolean);
+  return `<div class="scr">${head}<div class="pad col grow" style="gap:16px;padding-top:28px;padding-bottom:22px">
+   <span style="align-self:center;width:96px;height:96px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 12px var(--mist)">${tick('#fff',50)}</span>
+   <h1 tabindex="-1" style="text-align:center;margin-top:10px">تمام، ملفك جاهز</h1>
+   <div class="row" style="flex-wrap:wrap;gap:8px;justify-content:center">${tags.map(t=>`<span class="pill" style="background:var(--card);box-shadow:var(--soft);font-size:15px;padding:8px 14px">${t}</span>`).join('')}</div>
+   <p class="sub" style="text-align:center">تقدرين تغيّرينه أي وقت</p>
+   <div class="grow"></div>
+   <p class="sub" style="text-align:center;font-size:14px">المشي نبدأه 400 متر، وتعدّلينه بصوتك أثناء الرحلة</p><button class="btn btn-pri" data-go="haptics" style="min-height:96px;font-size:24px;border-radius:28px">كمّلي</button></div></div>`}
+ const val=S.profile[q.k];
+ return `<div class="scr">${head}
+ <div class="pad col grow" style="gap:12px;padding-top:22px;padding-bottom:18px">
+  <span style="font-size:14px;color:var(--muted)">سؤال ${S.aq+1} من ${n}</span>
+  <h1 tabindex="-1" class="fade" style="font-size:32px;margin-top:-6px">${q.t}</h1>
+  ${q.hint?`<p class="sub fade" style="margin-top:-4px">${q.hint}</p>`:''}
+  ${S.heard?`<div class="bubble b-u fade">${bars}سمعتك: «${S.heard}»</div>`:''}
+  <div class="col fade" style="gap:10px">${q.opts.map(o=>{const on=val===o[0];return `<button class="opt" data-act="pick" data-v="${o[0]}" aria-pressed="${on}" style="min-height:${q.opts.length>3?74:84}px"><span class="ti">${optIcon(q,o,on)}</span><span class="col grow"><span>${o[0]}</span>${o[1]?`<span style="font-size:14px;font-weight:400;color:var(--muted)">${o[1]}</span>`:''}</span><span class="chk">${ic.check()}</span></button>`}).join('')}</div>
+  <div class="grow"></div>
+  <div class="row" style="justify-content:center;gap:14px">
+   <button data-act="amic" aria-label="جاوبي بصوتك" style="width:76px;height:76px;border-radius:50%;border:none;background:var(--grad);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px var(--mist);flex:none">${ic.mic('#fff',34)}</button>
+   <span class="col"><span style="font-weight:700">أو جاوبي بصوتك</span><span style="font-size:14px;color:var(--muted)">رفيق يعيد جوابك عشان تتأكدين</span></span></div>
+  ${q.skip?`<button class="btn" data-act="askip" style="background:none;color:var(--navy);min-height:48px;font-size:17px">تخطّي</button>`:''}
+ </div></div>`;
+};
+
+
+const DOTS={alert:'<span style="width:12px;height:12px;border-radius:50%;background:currentColor"></span>',near:'<span style="width:12px;height:12px;border-radius:50%;background:currentColor"></span><span style="width:12px;height:12px;border-radius:50%;background:currentColor"></span>',arrive:'<span style="width:40px;height:12px;border-radius:6px;background:currentColor"></span>'};
+const HAPMEAN={alert:['اهتزازة قصيرة','انتبهي، فيه تعليمة جاية'],near:['اهتزازتين','محطتك أو الباب قريب'],arrive:['اهتزازة طويلة','وصلتي']};
+V.haptics=()=>`<div class="scr">
+ <div class="hdr" style="padding:18px 22px 18px"><div class="row" style="justify-content:space-between">${backBtn('about')}<span style="font-family:var(--display);font-size:20px;font-weight:700">حسّي الاهتزازات</span>${soundBtn(true)}</div></div>
+ <div class="pad col grow" style="gap:12px;padding-top:22px;padding-bottom:20px">
+  <h1 tabindex="-1" style="font-size:28px">ثلاث اهتزازات بس</h1>
+  <p class="sub" style="margin-top:-4px">كل وحدة لها معنى. المسيها عشان تحسينها.</p>
+  ${Object.keys(HAPMEAN).map(k=>`<button class="opt" data-act="feel" data-v="${k}" style="min-height:84px"><span class="ti" style="color:var(--navy)"><span class="row" style="gap:4px">${DOTS[k]}</span></span><span class="col grow"><span>${HAPMEAN[k][0]}</span><span style="font-size:15px;font-weight:400;color:var(--muted)">${HAPMEAN[k][1]}</span></span>${ic.vib('#3F5574')}</button>`).join('')}
+  <div class="row" style="background:var(--mist);border-radius:18px;padding:12px 14px;font-size:14px;line-height:1.6">${ic.mic('#3F5574',20)}<span>إذا نسيتي، قولي: «وش هذا الصوت؟»</span></div>
+  <div class="grow"></div>
+  <button class="btn btn-pri" data-go="home">ابدئي مع رفيق</button>
+ </div></div>`;
+
+V.home=()=>`<div class="scr">
+ ${skyHead(230,`<div class="col" style="position:absolute;top:22px;right:22px;left:22px;color:#fff;gap:4px"><div class="row" style="justify-content:space-between"><span style="font-size:15px;color:var(--mist)">صباح الخير</span>${soundBtn(true)}</div><h1 tabindex="-1" style="font-size:32px">نورة</h1></div>`)}
+ <div class="pad col grow" style="gap:14px;margin-top:-60px;position:relative;padding-bottom:20px">
+  <button class="card col" data-act="ask" style="border:none;align-items:center;gap:12px;padding:22px 16px;text-align:center;box-shadow:0 20px 40px -20px rgba(34,50,74,.6)">
+   <span class="pulse" style="width:84px;height:84px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center">${ic.mic('#fff',38)}</span>
+   <span style="font-family:var(--display);font-size:24px;font-weight:700">وين تبين تروحين؟</span>
+   <span style="font-size:14px;color:var(--muted)">اضغطي وقولي وجهتك</span></button>
+  <div class="col" style="gap:8px"><span style="font-size:14px;font-weight:600;color:var(--muted)">أماكنك</span>
+   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+    ${[['الدوام','work'],['البيت','home'],['المستشفى','hosp']].map(([l,i])=>`<button class="card col" data-act="${i==='work'?'ask':'toast'}" data-v="مثال للعرض: جرّبي الدوام" style="border:none;align-items:center;gap:8px;padding:14px 6px;font-weight:700;font-size:15px">${tile(ic[i]('#3F5574'),'var(--mist)',40,13)}${l}</button>`).join('')}</div></div>
+  <div class="card row" style="padding:12px 14px;border:2px solid var(--sand)">${tile(ic.warn(),'var(--sand)',40,12)}<span class="col"><span style="font-weight:700;font-size:15px">مصعد المدخل الشمالي معطل</span><span style="font-size:13px;color:var(--muted)">محطة الربيع · بلّغ عنه مستخدم قبل ساعة</span></span></div>
+  <div class="grow"></div>
+  <div class="row">${helpBtn()}</div>
+ </div></div>`;
+
+const leg=(icn,t,s,d,last,dark)=>`<li class="row" style="align-items:flex-start;position:relative;padding-bottom:${last?0:16}px">${last?'':'<span style="position:absolute;right:23px;top:50px;bottom:-4px;width:4px;border-radius:2px;background:var(--sky)"></span>'}<span style="width:50px;height:50px;border-radius:50%;background:${dark?'var(--grad)':'var(--mist)'};display:flex;align-items:center;justify-content:center;flex:none">${ic[icn](dark?'#fff':'#3F5574')}</span><span class="col grow" style="padding-top:3px"><span class="row" style="justify-content:space-between"><span style="font-size:17px;font-weight:700">${t}</span><span style="font-family:var(--display);font-weight:600;color:var(--navy)">${d}</span></span><span style="font-size:14px;color:var(--muted)">${s}</span></span></li>`;
+V.plan=()=>{
+ const legs=S.planAlt?[['walk','مشي للحافلة','350 متر · ضمن حدك','5 د'],['train','حافلة ثم المسار الأصفر','السائق يعرف إنك بتركبين','24 د'],['walk','مشي للدوام','مع إرشاد رفيق بالصوت','4 د']]
+  :[['car','توصيل RPT Link','إلى محطة الربيع','6 د'],['train','المترو: المسار الأصفر','3 محطات، بدون تحويل','18 د'],['walk','مشي للدوام','مع إرشاد رفيق بالصوت','4 د']];
+ return `<div class="scr">${topBar('home','رحلتك')}
+ <div class="pad col grow" style="gap:12px;padding-top:14px;padding-bottom:20px">
+  <div class="bubble b-u" style="font-size:16px">${bars}<span>«أبي أروح الدوام في المركز المالي، لازم أوصل الساعة ثمان»</span></div>
+  <div class="card col" style="padding:18px;gap:14px;border-radius:28px;box-shadow:0 16px 34px -18px rgba(34,50,74,.5)">
+   <h1 tabindex="-1" class="sr-only">خطة الرحلة</h1>
+   <div class="row" style="justify-content:space-between;align-items:flex-end"><span class="col"><span style="font-size:13px;color:var(--muted)">توصلين</span><span style="font-family:var(--display);font-size:44px;font-weight:700;line-height:1.05">${S.planAlt?'7:58':'7:50'}</span></span>${pill(S.planAlt?'قبل موعدك بدقيقتين':'قبل موعدك بعشر دقائق')}</div>
+   <div class="row" style="gap:8px;font-size:14px;background:var(--paper);border-radius:14px;padding:8px 12px">${ic.check('#3F5574',18)}<span>تجنّبنا طريقًا بلا رصيف حسب ملفك</span></div>
+   <ol class="col" style="list-style:none;margin:0;padding:0">${legs.map(([i,t,s,d],k)=>leg(i,t,s,d,k===2,k===1)).join('')}</ol></div>
+  <p style="margin:0;text-align:center;font-size:14px;color:var(--muted)">خطّطنا رحلتك في 4 ثوانٍ</p>
+  <div class="grow"></div>
+  <div class="card col" style="padding:16px;gap:12px;border:2px solid var(--navy);border-radius:26px;box-shadow:none">
+   <span style="font-family:var(--display);font-size:20px;font-weight:600">${S.planAlt?'أمشي بهذي الخطة؟':'أطلب لك التوصيل وأبدأ الرحلة؟'}</span><span style="font-size:14px;color:var(--muted);margin-top:-6px">قولي نعم أو لا · موافقة وحدة للرحلة كلها</span>
+   <div style="display:grid;grid-template-columns:3fr 2fr;gap:10px"><button class="btn btn-pri" data-act="go" style="min-height:58px">نعم</button><button class="btn btn-out" data-act="alt" style="min-height:58px">${S.planAlt?'الأولى':'لا'}</button></div>
+  </div></div></div>`;
+};
+
+V.trip=()=>{
+ const st=step();
+ if(S.pocket)return V.pocket(st);
+ let ticks='';for(let i=0;i<12;i++){const a=i*Math.PI/6,maj=i%3===0,r1=68,r2=maj?54:61;ticks+=`<line x1="${(85+r1*Math.sin(a)).toFixed(1)}" y1="${(85-r1*Math.cos(a)).toFixed(1)}" x2="${(85+r2*Math.sin(a)).toFixed(1)}" y2="${(85-r2*Math.cos(a)).toFixed(1)}" stroke="${maj?'#F8F8F4':'#B8CEE0'}" stroke-opacity="${maj?.95:.6}" stroke-width="${maj?3:2}" stroke-linecap="round"/>`}
+ const face=`<circle cx="85" cy="85" r="80" fill="rgba(220,232,241,.10)" stroke="#B8CEE0" stroke-opacity=".45" stroke-width="2"/>${ticks}`;
+ const dial=st.agentAlert?`<svg width="160" height="160" viewBox="0 0 170 170" aria-hidden="true">${face}<path transform="translate(45 42) scale(3.3)" fill="#D6C6A9" d="M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V9h2v4Z"/></svg>`:st.dir===null?`<svg width="160" height="160" viewBox="0 0 170 170" aria-hidden="true">${face}<g transform="translate(55 58)"><path fill="#D6C6A9" d="M30 0C15 0 0 2.5 0 15v24a9 9 0 0 0 9 9l-4 4v2h6l5-5h28l5 5h6v-2l-4-4a9 9 0 0 0 9-9V15C60 2.5 45 0 30 0Zm-18 42a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm9-17H8V12h13v13Zm6 0V12h13v13H27Zm19 17a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"/></g></svg>`
+  :`<svg width="160" height="160" viewBox="0 0 170 170" aria-hidden="true">${face}<g class="arrow" data-dir="${st.dir}" transform="rotate(${st.dir} 85 85)"><path d="M85 122 V50 M58 77 L85 50 L112 77" fill="none" stroke="#D6C6A9" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
+ const alert=st.leg<2?`<div class="card row" style="margin:10px 16px 0;padding:12px 14px;flex:none;border:2px solid var(--sand);box-shadow:none">${tile(ic.warn(),'var(--sand)',40,12)}<span class="col grow"><span style="font-size:16px;font-weight:700">مصعد المدخل الشمالي معطل</span><span style="font-size:13px;color:var(--muted)">بلّغ عنه مستخدم قبل ساعة · مسارك يتفاداه</span></span></div>`
+  :S.reported==='yes'?`<div class="row" style="margin:10px 16px 0;padding:12px 14px;flex:none;background:var(--mist);border-radius:20px">${tile(flag('#22324A'),'var(--sand)',40,12)}<span class="col"><span style="font-size:15px;font-weight:700">تأكيدك عن مصعد المخرج 1 وصل</span><span style="font-size:13px;color:var(--muted)">نبّهنا اللي بعدك</span></span></div>`:'';
+ return `<div class="scr">
+ <div class="row" style="justify-content:space-between;padding:18px 20px 0;flex:none">
+  <span class="col"><span style="font-size:13px;color:var(--muted)">في الطريق للدوام</span><span style="font-family:var(--display);font-size:20px;font-weight:700">${st.place}</span></span>
+  <span class="row" style="gap:8px">${soundBtn(false)}<span class="col card" style="align-items:center;padding:6px 14px;border-radius:16px"><span style="font-size:12px;color:var(--muted)">الوصول</span><span style="font-family:var(--display);font-size:18px;font-weight:700">${eta()}</span></span></span></div>
+ <div style="padding:10px 20px 0;flex:none">${metro(LEGS,st.leg,false,false,true)}</div>
+ <div class="col" style="margin:10px 16px 0;flex:1;min-height:320px;border-radius:34px;background:linear-gradient(160deg,#4E6687,#3F5574 45%,#22324A);color:#fff;align-items:center;padding:16px 18px 18px;box-shadow:0 20px 40px -20px rgba(34,50,74,.7);text-align:center">
+  <span class="row" style="align-self:stretch"><span class="pill" style="background:rgba(220,232,241,.16);color:#fff;font-size:14px;padding:7px 14px"><span style="color:var(--sand)">${bars}</span>${!S.sound?'على الشاشة واهتزاز':'في سماعتك الحين'}</span></span>
+  <div class="grow" style="min-height:4px"></div>${dial}
+  <h1 tabindex="-1" data-sync style="font-size:38px;margin-top:6px;line-height:1.25">${st.big}</h1>
+  <span data-sync style="font-size:17px;color:var(--mist);margin-top:6px;line-height:1.6">${st.sub}</span>
+  ${S.detail&&st.hint?`<span style="font-size:14px;color:var(--sky);margin-top:2px">${st.hint}</span>`:''}
+  <div class="grow" style="min-height:4px"></div>
+  ${st.agentAlert?`<span class="pill" style="background:var(--sand);color:var(--ink);font-size:14px;padding:8px 14px">${ic.warn('#22324A',16)}من بيانات المحطة وبلاغ مستخدم قبل 20 دقيقة</span>`:''}
+ </div>
+ <div class="row" style="margin:10px 16px 0;gap:8px;flex:none"><button class="btn btn-light" data-act="pocket" style="flex:1;min-height:52px;font-size:16px">${pocketI('#3F5574')}وضع الجيب</button><button class="btn btn-light" data-act="detail" aria-pressed="${!!S.detail}" style="flex:1;min-height:52px;font-size:16px;${S.detail?'outline:2px solid var(--navy)':''}">${S.detail?'تفاصيل أكثر ✓':'تفاصيل أكثر'}</button></div>
+ ${alert}
+ <div class="row" style="margin:10px 16px 16px;gap:10px;flex:none">
+  <button class="btn btn-light" data-act="repeat" aria-label="كرّر التعليمة" style="width:66px;min-height:66px;flex:none;padding:0">${ic.replay('#3F5574')}</button>
+  <button class="btn btn-light" data-act="talkTrip" aria-label="كلّمي رفيق" style="width:66px;min-height:66px;flex:none;padding:0">${ic.mic('#3F5574',26)}</button>
+  ${helpBtn()}</div></div>`;
+};
+
+
+const pocketI=c=>P('M5 3h14a2 2 0 0 1 2 2v5a9 9 0 0 1-18 0V5a2 2 0 0 1 2-2Zm3.3 6L12 12.7 15.7 9l1.4 1.4L12 15.5l-5.1-5.1L8.3 9Z',c,20);
+V.pocket=st=>`<div class="scr dark" style="background:linear-gradient(170deg,#3F5574,#22324A 60%)">
+ <div class="row" style="justify-content:space-between;padding:18px 20px 0;flex:none"><span class="col"><span style="font-size:13px;color:var(--mist)">وضع الجيب · ${eta()}</span><span style="font-family:var(--display);font-size:20px;font-weight:700">${st.place}</span></span><span class="row" style="gap:8px">${soundBtn(true)}<button data-act="pocket" aria-label="اطلعي من وضع الجيب" style="border:none;height:48px;border-radius:16px;padding:0 14px;background:rgba(220,232,241,.18);color:#fff;font-weight:600">الشاشة</button></span></div>
+ <div class="col grow" style="align-items:center;justify-content:center;text-align:center;padding:20px 24px;gap:14px">
+  <span class="pill pulse" style="background:rgba(220,232,241,.14);color:#fff;font-size:14px;padding:8px 14px"><span style="color:var(--sand)">${bars}</span>الجوال في جيبك · رفيق يكلمك وينبهك</span>
+  <h1 tabindex="-1" data-sync style="font-size:46px;line-height:1.2;margin-top:10px">${st.big}</h1>
+  <span data-sync style="font-size:19px;color:var(--mist);line-height:1.6">${st.sub}</span>
+ </div>
+ <div class="col" style="padding:0 20px 14px;gap:10px;flex:none">
+  <button class="btn" data-act="talkTrip" style="min-height:120px;border-radius:30px;background:var(--mist);color:var(--ink);font-size:24px;font-weight:700">${ic.mic('#3F5574',34)}كلّمي رفيق</button>
+  <div class="row">${helpBtn()}</div></div></div>`;
+
+V.checkin=()=>`<div class="scr">
+ <div class="row" style="justify-content:space-between;padding:18px 20px 0;flex:none">
+  <span class="col"><span style="font-size:13px;color:var(--muted)">في الطريق للدوام</span><span style="font-family:var(--display);font-size:20px;font-weight:700">محطة المركز المالي</span></span>
+  ${soundBtn(false)}</div>
+ <div class="col" style="margin:16px 16px 0;flex:1;border-radius:34px;background:linear-gradient(160deg,#4E6687,#3F5574 45%,#22324A);color:#fff;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;box-shadow:0 20px 40px -20px rgba(34,50,74,.7)">
+  <span class="pulse" style="width:120px;height:120px;border-radius:50%;background:rgba(220,232,241,.14);display:flex;align-items:center;justify-content:center"><span style="width:78px;height:78px;border-radius:50%;background:var(--sand);display:flex;align-items:center;justify-content:center">${P('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 11h-2V6h2v7Zm0 4h-2v-2h2v2Z','#22324A',44)}</span></span>
+  <h1 tabindex="-1" style="font-size:42px;margin-top:24px">كل شي تمام؟</h1>
+  <span style="font-size:18px;color:var(--mist)">لاحظت إنك واقفة في الممر من 3 دقائق</span><span style="font-size:14px;color:var(--sky)">ما نسألك وأنتِ تنتظرين على الرصيف</span></div>
+ <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:14px 16px 0;flex:none">
+  <button class="btn btn-help" data-act="lost" style="min-height:120px;font-size:30px;font-weight:700;border-radius:26px">ضعت</button>
+  <button class="btn card" data-act="ok" style="min-height:120px;font-size:30px;font-weight:700;border-radius:26px;border:none;color:var(--ink)">تمام</button></div>
+ <div style="padding:10px 16px 18px;flex:none" class="col"><button class="btn" data-act="listen" style="min-height:64px;background:var(--grad);color:#fff;font-size:19px;box-shadow:var(--shadow);">${ic.mic('#fff',26)}اضغطي وجاوبي بصوتك</button></div>
+</div>`;
+
+V.replan=()=>`<div class="scr">${topBar('trip','تغيّر المسار')}
+ <div class="pad col grow" style="gap:12px;padding-top:14px;padding-bottom:20px">
+  <div class="bubble b-r" style="font-size:17px;border:2px solid var(--sand);box-shadow:none"><span class="row" style="gap:8px;font-weight:700;margin-bottom:4px">${ic.warn('#22324A',18)}رفيق</span>انتبهي: مصعد المخرج 1 في محطة المركز المالي معطل الحين. عرفت من بيانات المحطة وبلاغ مستخدم قبل 20 دقيقة، فغيّرت طريقك قبل ما توصلين له.</div>
+  <div class="card col" style="padding:18px;gap:14px;border-radius:28px;box-shadow:0 16px 34px -18px rgba(34,50,74,.5)">
+   <h1 tabindex="-1" style="font-size:26px">غيّرت طريقك</h1>
+   <div class="row" style="opacity:.75">${tile(xI('#22324A'),'var(--sand)')}<span class="col grow"><span style="font-size:16px;font-weight:600;text-decoration:line-through;color:var(--muted)">مصعد المخرج 1</span><span style="font-size:14px;color:var(--muted)">معطل</span></span></div>
+   <span style="height:1px;background:var(--line)"></span>
+   <div class="row">${tile(tick('#fff'),'var(--grad)')}<span class="col grow"><span style="font-size:17px;font-weight:700">مصعد المخرج 3</span><span style="font-size:14px;color:var(--muted)">على يمينك بعد 20 خطوة</span></span>${pill('+8 د')}</div></div>
+  <div class="col" style="background:var(--mist);border-radius:22px;padding:16px;gap:12px">
+   <span class="row" style="font-size:16px;line-height:1.6;align-items:flex-start;gap:10px">${clockI('#3F5574')}${S.exitRide?'طلبنا لك سيارة عند المخرج 3. توصلين 7:56.':'هدفك الوصول الساعة 8. التحويلة تأخرك 8 دقائق.'}</span>
+   ${S.exitRide?'':`<button class="btn btn-pri" data-act="exitride" style="min-height:54px;font-size:17px">${ic.car('#fff')}أطلب لك توصيل من المخرج؟</button>`}</div>
+  <div class="grow"></div>
+  ${S.reported===false?`<div class="card col" style="border:2px solid var(--sand);border-radius:26px;padding:16px;gap:12px">
+   <div class="row">${tile(flag('#22324A'),'var(--sand)',42,13)}<span class="col"><span style="font-family:var(--display);font-size:19px;font-weight:700">نأكد للجهة إن المصعد ما زال معطل؟</span><span style="font-size:14px;color:var(--muted)">نرسل نوع العطل ووقت مرورك بدون اسمك، عشان يصلحونه أسرع</span></span></div>
+   <div style="display:grid;grid-template-columns:3fr 2fr;gap:10px"><button class="btn btn-help" data-act="report" data-v="1" style="min-height:56px;font-size:18px">نعم، أكّد</button><button class="btn btn-out" data-act="report" data-v="0" style="min-height:56px;font-size:18px">لا</button></div></div>`
+  :`<div class="row" style="background:var(--card);border:2px solid var(--sand);border-radius:20px;padding:14px">${ic.check()}<span style="font-size:15px;font-weight:600">${S.reported==='yes'?'أكّدنا للجهة بدون اسمك، وبننبّه اللي بعدك':'تمام، ما أرسلنا شي'}</span></div>`}
+  <button class="btn btn-pri" data-act="resume">كمّلي الطريق</button>
+ </div></div>`;
+
+V.call=()=>`<div class="scr dark" style="background:var(--ink)">
+ <div style="flex:1;position:relative;overflow:hidden;border-radius:0 0 34px 34px">
+  <svg viewBox="0 0 390 520" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="390" height="520" fill="#4E6687"/><path d="M0 380 L390 380 L390 520 L0 520Z" fill="#3F5574"/><g fill="#DCE8F1" opacity=".25"><rect x="60" y="120" width="110" height="260" rx="6"/><rect x="220" y="120" width="110" height="260" rx="6"/></g><rect x="150" y="70" width="90" height="34" rx="8" fill="#22324A"/><text x="195" y="93" fill="#D6C6A9" font-size="16" text-anchor="middle" font-family="Readex Pro">مصعد المخرج 3</text><path d="M0 470 L390 430" stroke="#D6C6A9" stroke-width="10" stroke-dasharray="14 10" opacity=".6"/></svg>
+  <span class="pill" style="position:absolute;top:18px;right:18px;background:rgba(34,50,74,.7);color:#fff">${ic.video('#fff')}كاميرتك الخلفية</span>
+  <div class="card row" style="position:absolute;top:18px;left:18px;padding:8px 10px;gap:8px;border-radius:16px;color:var(--ink)">${tile(ic.user('#3F5574'),'var(--mist)',38,19)}<span class="col"><span style="font-weight:700;font-size:14px">ريم</span><span style="font-size:11px;color:var(--muted)">موثّقة عبر نفاذ</span></span></div>
+ </div>
+ <div class="pad col" style="gap:12px;padding-top:18px;padding-bottom:24px">
+  <h1 tabindex="-1" style="font-size:22px">ريم معك الحين</h1>
+  <div class="bubble b-r" style="color:var(--ink)">«أشوف مصعد المخرج 3 قدامك، امشي خطوتين وزره على يمينك.»</div>
+  <button class="btn" data-act="listen" style="min-height:64px;background:var(--grad);color:#fff;font-size:19px;box-shadow:var(--shadow);">${ic.mic('#fff',26)}كلّمي رفيق</button>
+  <button class="btn btn-help" data-act="endcall">إنهاء المكالمة والرجوع للرحلة</button></div></div>`;
+
+V.volunteer=()=>`<div class="scr">
+ ${skyHead(250,`<div class="row" style="position:absolute;top:22px;right:22px;left:22px;justify-content:space-between;align-items:flex-start;color:#fff"><span class="col"><span style="font-size:14px;color:var(--mist)">رفيق للمتطوعين</span><h1 tabindex="-1" style="font-size:30px">ريم</h1></span><span class="pill" style="background:var(--mist);color:var(--ink)">${ic.shield('#3F5574').replace('width="22" height="22"','width="16" height="16"')}موثّقة عبر نفاذ</span></div><div style="position:absolute;bottom:84px;left:22px">${micHead(true)}</div>`)}
+ <div class="col grow" style="gap:12px;padding:0 18px 20px;margin-top:-70px;position:relative">
+  <div class="card col" style="padding:20px;gap:14px;border-radius:30px;border-top:6px solid var(--sand);box-shadow:0 20px 40px -20px rgba(34,50,74,.6)">
+   <span class="row" style="gap:8px;font-size:14px;font-weight:600;color:var(--muted)"><span class="pulse" style="width:10px;height:10px;border-radius:50%;background:var(--sand)"></span>طلب مساعدة جديد</span>
+   <h2 style="font-size:30px">توجيه داخل محطة</h2>
+   <div class="col" style="gap:10px;font-size:16px">
+    <span class="row">${tile(ic.video('#3F5574'),'var(--mist)',38,12)}عن بُعد، مكالمة فيديو</span>
+    <span class="row">${tile(pin('#3F5574'),'var(--mist)',38,12)}محطة المركز المالي (تقريبي)</span>
+    <span class="row">${tile(info('#3F5574'),'var(--mist)',38,12)}مستخدمة كفيفة تحتاج من يشوف معها</span></div></div>
+  <div class="row" style="background:var(--mist);border-radius:20px;padding:12px 14px;font-size:14px;line-height:1.6">${lockI('#3F5574')}<span>ما تظهر هوية المستخدمة. تشوفين نوع المساعدة والموقع التقريبي فقط.</span></div>
+  <div class="grow"></div>
+  <div class="col" style="gap:6px"><span style="text-align:center;font-size:14px;color:var(--muted)">الطلب متاح لمدة 60 ثانية</span><span style="height:6px;border-radius:3px;background:var(--line);overflow:hidden;display:flex"><span id="vbar" style="width:100%;background:var(--sand);border-radius:3px;transition:width 60s linear"></span></span></div>
+  <div style="display:grid;grid-template-columns:3fr 2fr;gap:10px"><button class="btn btn-pri" data-act="vaccept" style="min-height:64px;font-size:20px;font-weight:700">قبول</button><button class="btn btn-out" data-act="toast" data-v="تمام، نوصل الطلب لمتطوعة ثانية" style="min-height:64px;font-size:20px">اعتذار</button></div>
+ </div></div>`;
+
+V.impact=()=>`<div class="scr">
+ <div class="hdr col" style="border-radius:0 0 40px 40px;padding:26px 22px 78px;text-align:center;position:relative;overflow:hidden">
+  <svg width="390" height="300" viewBox="0 0 390 300" aria-hidden="true" style="position:absolute;inset:0;opacity:.16"><circle cx="195" cy="110" r="150" fill="none" stroke="#B8CEE0" stroke-width="2"/><circle cx="195" cy="110" r="110" fill="none" stroke="#B8CEE0" stroke-width="2"/></svg>
+  <span style="align-self:center;width:92px;height:92px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 12px rgba(220,232,241,.2);position:relative">${tick('#3F5574',50)}</span>
+  <h1 tabindex="-1" style="margin-top:22px;font-size:32px;position:relative">وصلتي يا نورة</h1><span style="color:var(--mist);font-size:17px;margin-top:4px;position:relative">7:56 · قبل موعدك بأربع دقائق</span></div>
+ <div class="col grow" style="gap:12px;padding:0 18px 20px;margin-top:-58px;position:relative">
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+   ${[['بدون','مرافق'],['7 د','وفّرناها بتجنّب المصعد'],['4 ث','خطّطنا رحلتك'],['3 د','ساعدتك ريم']].map(([v,l])=>`<div class="card col" style="padding:14px 16px;gap:2px"><span style="font-family:var(--display);font-size:26px;font-weight:700;color:var(--navy)">${v}</span><span style="font-size:14px;color:var(--muted)">${l}</span></div>`).join('')}</div>
+  ${S.reported==='no'?'':`<div class="row" style="background:var(--card);border:2px solid var(--sand);border-radius:20px;padding:12px 14px">${tile(flag('#22324A'),'var(--sand)',40,13)}<span style="font-size:15px;font-weight:600">تأكيدك عن المصعد نبّه 3 مستخدمين بعدك</span></div>`}
+  <div class="grow"></div>
+  <span style="text-align:center;font-family:var(--display);font-size:22px;font-weight:700">الرحلة كانت زينة؟</span>
+  ${S.fb?`<div class="row" style="justify-content:center;background:var(--mist);border-radius:18px;padding:14px;font-weight:600">${S.fb==='yes'?'الحمد لله، شكرًا لك':'سجّلنا ملاحظتك عشان نحسّن'}</div>`:`<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"><button class="btn btn-pri" data-act="fb" data-v="yes" style="min-height:72px;font-size:22px">نعم</button><button class="btn btn-out" data-act="fb" data-v="no" style="min-height:72px;font-size:18px">لا، وش صار؟</button></div>`}
+  <button class="btn" data-act="listen" style="min-height:64px;background:var(--grad);color:#fff;font-size:19px;box-shadow:var(--shadow);">${ic.mic('#fff',26)}اضغطي وجاوبي بصوتك</button>
+  <p style="margin:0;text-align:center;font-size:13px;color:var(--muted)">الأرقام في العرض من بيانات توضيحية</p>
+  <button class="btn btn-out" data-act="homeReset" style="min-height:52px;font-size:17px">رجوع للرئيسية</button>
+ </div></div>`;
+
+/* ---------- overlays ---------- */
+function overlay(html){closeOv(true);const o=document.createElement('div');o.className='ov';o.id='ov';o.innerHTML=`<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;o.addEventListener('click',e=>{if(e.target===o)closeOv()});app.appendChild(o);S.overlay=true;animateSheet(o);setTimeout(()=>{const h=o.querySelector('h2');if(h){h.setAttribute('tabindex','-1');h.focus()}},50)}
+function closeOv(silent){const o=$('#ov');if(o)o.remove();S.overlay=false;if(!silent)schedule()}
+const HELP=[['replan',replanI,'رفيق يغيّر الطريق','لعائق بسيط','غيّر الطريق'],['volunteer',c=>ic.video(c).replace('width="22" height="22"','width="26" height="26"'),'متطوعة عن بُعد','تشوف معك عبر الكاميرا','أوصليني بمتطوعة'],['staff',c=>person(c,26),'مساعدة حاضرة','موظف المحطة أو متطوعة قريبة','اطلبي مساعدة حاضرة']];
+function helpSheet(lost){const sel=S.helpSel??1;return `<span class="grab"></span>
+ <h2 style="font-size:28px">وش يساعدك؟</h2>
+ <p class="sub" style="margin-top:-6px">${lost?'لا تتحركين، أنا معك. ':''}رفيق يختار أخف مساعدة، وما يطلب أحد إلا بموافقتك</p>
+ ${HELP.map(([k,icn,t,s],i)=>{const on=i===sel;return `<button class="opt" data-act="hsel" data-v="${i}" aria-pressed="${on}" style="font-size:17px"><span class="ti" style="${i===2&&!on?'background:var(--sand)':''}">${icn(on?'#fff':i===2?'#22324A':'#3F5574')}</span><span class="col grow"><span style="font-size:18px;font-weight:700">${t}</span><span style="font-size:14px;font-weight:400;color:var(--muted)">${s}</span></span>${i===1?pill('مقترح'):''}<span style="font-family:var(--display);font-size:22px;color:var(--sky)">${i+1}</span></button>`}).join('')}
+ <button class="btn btn-pri" data-act="hgo" style="margin-top:4px">${HELP[sel][4]}</button>
+ <button class="btn" data-act="close" style="background:none;color:var(--navy);min-height:48px">إلغاء</button>`}
+
+
+/* ---------- real voice: Claude voice out, dictation in ---------- */
+let heard='',quietT=null;
+const lb=()=>document.getElementById('listenBar');
+function showListen(t){const b=lb();b.hidden=false;b.querySelector('.lt').textContent=t}
+function hideListen(){const b=lb();if(b)b.hidden=true}
+function armQuiet(ms){clearTimeout(quietT);quietT=setTimeout(()=>{if(D)D.stop().catch(()=>{})},ms||1500)}
+const MICWHY={file:'فاتحه الملف من جهازك (file://)، والمتصفح يمنع المايك كذا. افتحي رابط Claude أو ارفعي الملف على موقع مثل Netlify.',
+  not_granted:'المتصفح ما سمح للمايك. اضغطي القفل جنب الرابط، وخلي الميكروفون مسموح، وحدّثي الصفحة.',
+  dismissed:'سكّرتي سؤال المايك بدون موافقة. اضغطي المايك مرة ثانية ووافقي.',
+  network:'خدمة تحويل الصوت تحتاج إنترنت، وما قدرت توصل لها.',
+  'audio-capture':'ما لقيت مايك متصل بالجهاز.',
+  'no-speech':'ما سمعت أي كلام. قربي من المايك وتكلمي بعد ما يطلع «أسمعك».',
+  none:'هذا المتصفح ما فيه أداة تحويل الكلام لنص.',
+  unavailable:'خدمة المايك مو متاحة لهذا الحساب أو المتصفح.'};
+function micFail(code,raw){S.micErr=(raw||code)+'';const m=MICWHY[raw]||MICWHY[code]||('المايك ما اشتغل ('+(raw||code)+').');
+  showMicState(m);toast('المايك ما اشتغل: '+m)}
+function showMicState(msg){const el=document.getElementById('mstate');if(!el)return;
+  const src=D?(D.__web?'مايك المتصفح':'مايك Claude'):'ما فيه مايك';
+  el.innerHTML='<b>المايك:</b> '+src+(location.protocol==='file:'?' · <b>الملف مفتوح من الجهاز</b>':'')+(msg?'<br>'+msg:'')}
+function listen(fallback){
+  if(location.protocol==='file:'&&(!D||D.__web)){micFail('file');fallback&&fallback();return}
+  if(!D){const w=webSR();if(w){wireD(w)}else{micFail('none');fallback&&fallback();return}}
+  try{if(CT&&CT.active())CT.stop().catch(()=>{})}catch(e){}
+  try{speechSynthesis.cancel()}catch(e){}
+  heard='';
+  const lang=D.__web?undefined:(S.dLang===undefined?'ar':S.dLang);
+  const p=lang?D.start({language:lang}):D.start();
+  showListen('أسمعك… تكلّمي');armQuiet(8000);
+  p.then(()=>{S.micErr=null;showMicState('شغال')}).catch(e=>{hideListen();const c=e&&e.code,raw=e&&e.raw;
+    if(c==='stopped'&&raw!=='no-speech')return;
+    if(!D.__web&&c==='unavailable'&&lang){S.dLang=null;say('اضغطي المايك مرة ثانية، بجرّب طريقة ثانية.',2);toast('اضغطي المايك مرة ثانية',true);return}
+    if(!D.__web&&(c==='unavailable'||c==='not_granted'||c==='upstream_error')){const w=webSR();if(w){wireD(w);say('اضغطي المايك مرة ثانية.',2);toast('بنستخدم مايك المتصفح. اضغطي المايك مرة ثانية',true);return}}
+    micFail(c,raw);if(c==='not_granted'||c==='unavailable')fallback&&fallback()});
+}
+const norm=t=>(' '+t+' ').replace(/[ً-ْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[؟?!.,،]/g,' ').replace(/\s+/g,' ');
+const has=(n,...w)=>w.some(x=>n.includes(x));
+const isYes=n=>/ (نعم|اي|ايه|ايوه|اكيد|يلا|تمام|موافق|موافقه|طيب|اوكي|ok) /.test(n);
+const isNo=n=>/ (لا|لاء|لأ|مابي|ما ابي|ابد) /.test(n);
+const sheet=()=>document.querySelector('#ov .sheet');
+function voiceMiss(){S.miss=(S.miss||0)+1;
+  const hint={login:'قولي: نفاذ، أو دخول.',about:'قولي الجواب، مثل: عصا، أو لا.',haptics:'قولي: قصيرة، أو اهتزازتين، أو طويلة، أو كمّلي.',home:'قولي وين تبين تروحين، مثل: الدوام.',plan:'قولي نعم أو لا.',trip:'قولي: وش بعده، أو عيد، أو ساعدني.',checkin:'قولي: تمام، أو ضعت.',replan:'قولي: أكّد، أو لا، أو كمّلي.',impact:'قولي نعم أو لا.',volunteer:'قولي: قبول، أو اعتذار.',call:'قولي: خلصت.'}[S.screen]||'قولي: ساعدني.';
+  if(S.miss>=2&&['trip','checkin','replan','home'].includes(S.screen)){S.miss=0;say('ما فهمت عليك. أوصلك بمتطوعة تساعدك؟',2);openHelp(false);return}
+  say('ما سمعتك زين. '+hint,2)}
+function handleVoice(raw){
+  const n=norm(raw);toast('سمعتك: «'+raw.trim()+'»');
+  const ok=()=>{S.miss=0};
+  // global
+  if(has(n,'وقف الصوت','طف الصوت','اطفي الصوت')){ok();if(S.sound)A.sound();return}
+  if(has(n,'شغل الصوت')){ok();if(!S.sound)A.sound();return}
+  if(has(n,'اسكت','اسكتي')){ok();say('بسكت ثلاثين ثانية. قولي عيد إذا تبين التعليمة.',3);setTimeout(()=>{S.hushUntil=Date.now()+30000},2500);return}
+  if(has(n,'هذا الصوت','وش الصوت','هذي الاهتزاز','وش الاهتزاز')){ok();const m=S.lastCue?HAPMEAN[S.lastCue]:null;say(m?'آخر شي كان '+m[0]+'، يعني: '+m[1]+'.':'ما فيه اهتزازة قبل شوي.',2);return}
+  if(has(n,' عيد',' كرر','مره ثانيه','وش قلت')&&!sheet()){ok();onEnter(S.screen);return}
+  // open sheets first
+  const sh=sheet();
+  if(sh){
+    if(sh.querySelector('[data-act=hsel]')){
+      if(has(n,'واحد',' 1 ','طريق','تخطيط')){ok();A.hsel({dataset:{v:'0'}});A.hgo();return}
+      if(has(n,'اثنين','ثنين',' 2 ','متطوع','فيديو','كاميرا')){ok();A.hsel({dataset:{v:'1'}});A.hgo();return}
+      if(has(n,'ثلاث',' 3 ','موظف','حاضر','احد يجيني')){ok();A.hsel({dataset:{v:'2'}});A.hgo();return}
+    }
+    if(sh.querySelector('[data-act=gset]')){
+      if(has(n,'انثي','انثى','بنت','حرمه')){ok();A.gset({dataset:{v:'أنثى'}});return}
+      if(has(n,'ذكر','رجال','ولد')){ok();A.gset({dataset:{v:'ذكر'}});return}
+      if(has(n,'تخطي','تخط','مو مهم')||isNo(n)){ok();A.gset({dataset:{v:''}});return}
+    }
+    if(isYes(n)||has(n,'وصلني','اطلب')){const b=sh.querySelector('.btn-pri,.btn-help');if(b){ok();b.click();return}}
+    if(isNo(n)||has(n,'رجوع','الغ')){ok();closeOv();say('تمام.',1);return}
+  }
+  if(has(n,'ساعد','مساعده')&&!['start','login','about'].includes(S.screen)){ok();openHelp(false);return}
+  if(has(n,'ضعت','ضايع','تهت','ضايعه')&&['trip','checkin','replan'].includes(S.screen)){ok();if(S.screen==='checkin')go('trip',{nofocus:true});openHelp(true);return}
+  const sc=S.screen;
+  if(sc==='start'){ok();A.begin();return}
+  if(sc==='login'){if(has(n,'نفاذ','نفاد','هويه')){ok();A.nafath();return}if(has(n,'دخول','ادخل','اسم','حساب')||isYes(n)){ok();S.login='user';S.aq=0;S.heard=null;go('about');return}}
+  if(sc==='about'){const Q=ABOUT();
+    if(S.aq>=Q.length){if(has(n,'كمل','ابد','يلا','التالي')||isYes(n)){ok();go('haptics');return}}
+    else{const q=Q[S.aq];let v=null;
+      if(q.k==='aid'){if(has(n,'عصا','عصي'))v='عصا بيضاء';else if(has(n,'كرسي'))v='كرسي متحرك';else if(has(n,'عكاز','طرف'))v='عكاز أو طرف صناعي';else if(has(n,'بدون','ولا شي','ما عندي','لا شي'))v='بدون وسيلة'}
+      if(q.k==='stairs'){if(has(n,'عادي','ما يفرق','درج عادي')||isNo(n))v='لا، عادي';else if(isYes(n)||has(n,'مصعد','اتجنب','اتجنبه'))v='نعم'}
+      if(v){ok();S.heard=raw.trim();A.pick({dataset:{v}});return}}}
+  if(sc==='haptics'){if(has(n,'قصير')){ok();A.feel({dataset:{v:'alert'}});return}if(has(n,'اثنين','ثنتين','اهتزازتين')){ok();A.feel({dataset:{v:'near'}});return}if(has(n,'طويل')){ok();A.feel({dataset:{v:'arrive'}});return}if(has(n,'كمل','ابد','يلا','خلاص')||isYes(n)){ok();go('home');return}}
+  if(sc==='home'){if(has(n,'دوام','مالي','كافد','شغل','عمل')){ok();S.planAlt=false;go('plan');return}if(has(n,'بيت','مستشف')){ok();say('في العرض جهزنا رحلة الدوام. قولي: الدوام.',2);return}}
+  if(sc==='plan'){if(isYes(n)||has(n,'اطلب','ابدا','ابدأ')){ok();A.go();return}if(isNo(n)||has(n,'ثاني','غير')){ok();A.alt();return}}
+  if(sc==='trip'){
+    if(has(n,'خربان','معطل','عطلان','خراب','واقف المصعد')){ok();go('replan');return}
+    if(has(n,'وين انا','وين صرت','وينني')){ok();A.phrase({dataset:{v:'وين أنا؟'}});return}
+    if(has(n,'بعده','التالي','الجاي','بعدين','كمل')){ok();nextStep();return}
+    if(has(n,'كم باقي','باقي','متى اوصل')){ok();const left=Math.max(1,STEPS.length-1-S.step)*3;say('باقي تقريبًا '+left+' دقيقة. توصلين '+eta()+'.',2);return}
+    if(has(n,'الجيب','جيبي')){ok();if(!S.pocket)A.pocket();return}
+    if(has(n,'المشي طويل','طويل علي','تعبت')){ok();A.phrase({dataset:{v:'المشي طويل علي'}});return}
+    if(has(n,'تفاصيل','الساعه')){ok();A.detail();return}
+  }
+  if(sc==='checkin'){if(isYes(n)||has(n,'زين','بخير','الحمد')){ok();A.ok();return}if(isNo(n)){ok();go('trip',{nofocus:true});openHelp(true);return}}
+  if(sc==='replan'){
+    if(has(n,'توصيل','سياره','اطلب')&&!S.exitRide){ok();A.exitride();return}
+    if(S.reported===false&&(has(n,'ارفع','بلغ','اكد','أكد')||isYes(n))){ok();A.report({dataset:{v:'1'}});return}
+    if(S.reported===false&&isNo(n)){ok();A.report({dataset:{v:'0'}});return}
+    if(has(n,'كمل','يلا','امش')){ok();A.resume();return}
+  }
+  if(sc==='call'&&has(n,'خلص','انه','شكرا','سكر')){ok();A.endcall();return}
+  if(sc==='volunteer'){if(has(n,'قبول','اقبل')||isYes(n)){ok();A.vaccept();return}if(has(n,'اعتذر')||isNo(n)){ok();toast('تمام، نوصل الطلب لمتطوعة ثانية');return}}
+  if(sc==='impact'){if(has(n,'رئيس','رجوع')){ok();A.homeReset();return}if(!S.fb&&(isYes(n)||has(n,'زين','حلو','ممتاز'))){ok();A.fb({dataset:{v:'yes'}});return}if(!S.fb&&isNo(n)){ok();A.fb({dataset:{v:'no'}});return}}
+  voiceMiss();
+}
+function webSR(){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return null;
+  const fin=[],par=[],st=[];let r=null;
+  return {__web:true,start(){return new Promise((res,rej)=>{try{r=new R();r.lang='ar-SA';r.interimResults=true;r.continuous=false;
+      r.onstart=()=>{st.forEach(f=>f({state:'listening'}));res()};
+      r.onresult=e=>{let fi='',pa='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)fi+=t;else pa+=t}
+        if(pa)par.forEach(f=>f({text:pa}));if(fi)fin.forEach(f=>f({text:' '+fi}))};
+      r.onerror=e=>{const raw=e.error;const err={code:raw==='not-allowed'||raw==='service-not-allowed'?'not_granted':raw==='no-speech'||raw==='aborted'?'stopped':'upstream_error',raw};rej(err);if(raw==='no-speech'){hideListen()}};
+      r.onend=()=>{r=null;st.forEach(f=>f({state:'idle'}))};r.start()}catch(x){rej({code:'unavailable'})}})},
+    stop(){try{r&&r.stop()}catch(e){}return Promise.resolve()},active(){return !!r},
+    onPartial(f){par.push(f);return()=>{}},onFinal(f){fin.push(f);return()=>{}},onState(f){st.push(f);return()=>{}}}}
+function wireD(d){D=d;D.onPartial(({text})=>{showListen((heard+text).trim()||'أسمعك… تكلّمي');if(text)armQuiet()});
+  D.onFinal(({text})=>{heard+=text;showListen(heard.trim());armQuiet()});
+  D.onState(({state})=>{if(state==='idle'){clearTimeout(quietT);hideListen();const t=heard.trim();heard='';if(t)handleVoice(t)}});
+  showVoiceState();showMicState()}
+(async()=>{try{
+  let t=null,d=null;
+  if(window.claude&&claude.use){[t,d]=await Promise.all([claude.use('tts'),claude.use('dictation')])}
+  if(t){CT=t;CT.onState(({state,reason})=>{ctSpeaking=state!=='idle';if(state==='speaking')fireStart(ctId);if(state==='idle'){curPri=0;if(reason==='completed')fireEnd(ctId)}});voiceState='claude';showVoiceState();
+    const vs=document.getElementById('voiceSel');if(vs){vs.closest('.panel').querySelectorAll('.brv').forEach(x=>x.hidden=true)}}
+  const dd=d||webSR();if(dd)wireD(dd);
+}catch(e){const w=webSR();if(w)wireD(w)}})();
+
+/* ---------- navigation ---------- */
+const JUMPS=[['start','البداية'],['login','الدخول'],['about','نتعرّف عليك'],['haptics','الاهتزازات'],['home','الرئيسية'],['plan','المسار'],['trip','الإرشاد'],['checkin','كل شي تمام؟'],['replan','إعادة التخطيط'],['help','المساعدة'],['volunteer','المتطوعة'],['impact','الأثر']];
+let timer=null;
+
+/* ---------- motion (GSAP): for sighted viewers only, never delays speech ---------- */
+const RM=()=>!window.gsap||matchMedia('(prefers-reduced-motion: reduce)').matches;
+let prevScreen=null,prevDir=0,prevTrain=null,prevStep=-1;
+function animateScreen(name){
+  if(RM()){prevScreen=name;return}
+  const g=window.gsap,scr=app.querySelector('.scr');if(!scr)return;
+  const same=name===prevScreen;
+  if(!same){
+    g.from(scr.children,{y:18,opacity:0,duration:.5,stagger:.06,ease:'power3.out',clearProps:'transform,opacity'});
+  }
+  // metro train glides from its last station
+  const tr=app.querySelector('.mtrain');
+  if(tr){const x=+tr.dataset.x;g.fromTo(tr,{attr:{transform:`translate(${prevTrain??x} 0)`}},{attr:{transform:`translate(${x} 0)`},duration:.9,ease:'back.out(1.4)'});prevTrain=x}
+  if(name==='start'){
+    const logo=scr.querySelector('.pulse');if(logo)g.to(logo,{y:-10,duration:1.6,ease:'sine.inOut',yoyo:true,repeat:-1});
+    g.from(scr.querySelectorAll('circle'),{scale:.6,opacity:0,transformOrigin:'50% 50%',duration:1.4,stagger:.15,ease:'expo.out'});
+  }
+  if(name==='trip'){
+    const a=app.querySelector('.arrow');
+    if(a){const d=+a.dataset.dir;let from=prevDir;if(Math.abs(d-from)>180)from+=d>from?360:-360;
+      a.setAttribute('transform',`rotate(${from} 85 85)`);const o={r:from};window.__arrowGo=()=>{window.__arrowGo=null;g.to(o,{r:d,duration:.8,ease:'back.out(1.8)',onUpdate:()=>a.setAttribute('transform',`rotate(${o.r} 85 85)`)})};prevDir=d}
+    const st=STEPS[S.step];
+    prevStep=S.step;
+  }
+  if(name==='about'){const opts=app.querySelectorAll('.opt');g.from(opts,{x:30,opacity:0,duration:.45,stagger:.07,ease:'power2.out',clearProps:'transform,opacity'})}
+  if(name==='impact'){
+    const tick=scr.querySelector('.hdr span[style*="border-radius:50%"]');if(tick)g.from(tick,{scale:0,rotation:-90,duration:.8,ease:'back.out(2.2)'});
+    g.from(scr.querySelectorAll('.card'),{y:30,opacity:0,duration:.6,stagger:.1,delay:.25,ease:'power3.out',clearProps:'transform,opacity'});
+  }
+  if(name==='replan'){const b=scr.querySelector('.bubble');if(b)g.fromTo(b,{scale:.9},{scale:1,duration:.7,ease:'elastic.out(1,.4)'})}
+  prevScreen=name;
+}
+function animateSheet(o){if(RM())return;const sh=o.querySelector('.sheet');window.gsap.from(sh.children,{y:22,opacity:0,duration:.4,stagger:.05,ease:'power2.out',clearProps:'transform,opacity'})}
+function animateHaptic(k){if(RM())return;const ph=document.querySelector('.phone');const amp={alert:5,near:4,arrive:7}[k]||4;
+  window.gsap.fromTo(ph,{x:-amp},{x:0,duration:k==='arrive'?.9:.5,ease:'elastic.out(1.4,.2)',clearProps:'transform'})}
+
+
+/* ---------- keep picture, vibration and voice together ---------- */
+function syncVisuals(name){
+  if(name!=='trip')return;
+  const els=[...app.querySelectorAll('[data-sync]')],st=step(),k=S.step;
+  els.forEach(e=>{e.style.opacity='0'});
+  whenSpeaking(()=>{
+    if(S.screen!=='trip'||S.step!==k)return;
+    if(window.gsap&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      gsap.fromTo(els,{opacity:0,y:16},{opacity:1,y:0,duration:.4,stagger:.07,ease:'power3.out'});
+      if(st.agentAlert){const card=app.querySelector('.scr .col[style*="linear-gradient(160deg"]');if(card)gsap.fromTo(card,{x:-10},{x:0,duration:.8,ease:'elastic.out(1.2,.25)'})}
+    }else els.forEach(e=>{e.style.transition='opacity .25s';e.style.opacity='1'});
+    if(st.hap)haptic(st.hap);
+    if(window.__arrowGo)window.__arrowGo();
+  });
+}
+
+function go(name,opts={}){
+  clearTimeout(timer);closeOv(true);S.screen=name;app.innerHTML=V[name]();
+  const h=app.querySelector('h1');if(h&&!opts.nofocus)setTimeout(()=>h.focus({preventScroll:true}),40);
+  document.querySelectorAll('#jump button').forEach(b=>b.setAttribute('aria-current',b.dataset.j===name));
+  onEnter(name);animateScreen(name);syncVisuals(name);schedule();
+  if(name==='volunteer')requestAnimationFrame(()=>requestAnimationFrame(()=>{const v=$('#vbar');if(v)v.style.width='0%'}));
+}
+function onEnter(n){
+  if(n==='login')say('أهلًا، أنا رفيق. عشان نبدأ، سجّلي دخولك. قولي: نفاذ، أو قولي: اسم المستخدم.');
+  if(n==='about'){const Q=ABOUT();if(S.aq>=Q.length)say('تمام، ملفك جاهز: '+Q.map(x=>S.profile[x.k]).filter(Boolean).join('، ')+'. الحين نعلّمك ثلاث اهتزازات. الزر تحت: كمّلي.');else{const q=Q[S.aq];say((S.aq===0?'نتعرّف عليك. ':'')+q.t+' '+(q.hint?q.hint+'. ':'')+'الخيارات: '+q.opts.map(o=>o[0]).join('، ')+'. اختاري، أو قولي جوابك.')}}
+  if(n==='home')say('صباح الخير نورة. تنبيه: مصعد المدخل الشمالي في محطة الربيع معطل، وبنتفاداه ونستخدم المدخل الجنوبي في رحلتك. وين تبين تروحين؟');
+  if(n==='plan')say(S.planAlt?'الخيار الثاني: مشي للحافلة، ثم المسار الأصفر. توصلين سبعة وثمانية وخمسين. أمشي بهذي الخطة؟':'توصلين سبعة وخمسين، قبل موعدك بعشر دقائق. توصيل، ثم المسار الأصفر، ثم مشي. ومصعد المدخل الشمالي معطل، فاخترت لك المدخل الجنوبي. أطلب لك التوصيل وأبدأ الرحلة؟ قولي نعم أو لا.');
+  if(n==='trip'){const st=step();say(st.big+'. '+st.sub.replaceAll('·','،')+(S.detail&&st.hint?'. '+st.hint:''),2);if(st.agentAlert){const k=S.step;whenSpoken(()=>setTimeout(()=>{if(S.screen==='trip'&&S.step===k&&!S.overlay)go('replan')},700),10000)}}
+  if(n==='haptics')say('حسّي الاهتزازات. ثلاث بس: قصيرة يعني انتبهي، اهتزازتين يعني الباب أو المحطة قريب، وطويلة يعني وصلتي. المسي كل وحدة عشان تحسينها.');
+  if(n==='checkin'){say('كل شي تمام؟ لاحظت إنك واقفة في الممر من ثلاث دقايق.',3);haptic('alert')}
+  if(n==='replan')say('انتبهي: مصعد المخرج واحد في محطة المركز المالي معطل الحين، فغيّرت طريقك. مصعد المخرج ثلاثة على يمينك بعد عشرين خطوة. تبين نأكد للجهة إن المصعد ما زال معطل؟',3);
+  if(n==='impact'&&!S.fb){say('وصلتي يا نورة. الرحلة كانت زينة؟ قولي نعم أو لا.');haptic('arrive')}
+  if(n==='volunteer')say('طلب مساعدة جديد: توجيه داخل محطة.');
+}
+function schedule(){clearTimeout(timer);if(S.screen!=='trip'||!S.auto||S.overlay)return;const st=STEPS[S.step],k=S.step;if(st.agentAlert)return;
+  const next=()=>{if(S.screen==='trip'&&S.step===k&&!S.overlay&&S.auto)nextStep()};
+  whenSpoken(()=>{clearTimeout(timer);timer=setTimeout(next,1600)},12000)}
+function nextStep(){
+  if(S.screen==='checkin'){A.ok();return}
+  if(S.screen!=='trip'){go('trip');return}
+  const st=STEPS[S.step];
+  if(st.agentAlert){go('replan');return}
+  if(st.end){go('impact');return}
+  if(st.checkin&&!S.checked){S.checked=true;go('checkin');return}
+  S.step++;go('trip',{nofocus:true});
+}
+
+/* ---------- actions ---------- */
+function simulateListen(btn,cb){btn.classList.add('pulse');try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>{btn.classList.remove('pulse');cb()},1100)}
+function openHelp(lost){clearTimeout(timer);S.helpSel=1;S.lost=lost;overlay(helpSheet(lost));say((lost?'لا تتحركين، أنا معك. ':'')+'وش يساعدك؟ واحد: رفيق يغيّر الطريق. اثنين: متطوعة عن بعد. ثلاثة: مساعدة حاضرة.')}
+const A={
+ begin(){S.sound=true;syncSound();unlockVoice();go('login');if(location.protocol==='file:')setTimeout(()=>toast('تنبيه: فاتحه الملف من جهازك، فالمايك ما يشتغل. ارفعيه على Netlify أو افتحي رابط Claude'),4000)},
+ sound(){if(S.sound){say('أطفيت الصوت. التنبيهات بتجيك بالاهتزاز، وتقدرين ترجعين الصوت من زر السماعة.',3);S.sound=false;syncSound();toast('الصوت مطفأ',true)}else{S.sound=true;syncSound();toast('الصوت شغال',true);onEnter(S.screen)}},
+ pick(b){if(S.busy)return;const Q=ABOUT(),q=Q[S.aq];S.profile[q.k]=b.dataset.v;S.busy=true;go('about',{nofocus:true});say('سجّلت: '+b.dataset.v);setTimeout(()=>{S.busy=false;S.heard=null;S.aq++;go('about')},1500)},
+ amic(b){if(S.busy)return;const q=ABOUT()[S.aq];simulateListen(b,()=>{S.heard=q.heard;A.pick({dataset:{v:q.voice}})})},
+ askip(){S.profile.gender=null;S.heard=null;S.aq++;go('about');},
+ aback(){S.heard=null;if(S.aq>0){S.aq--;go('about')}else go('login')},
+ toast(b){toast(b.dataset.v)},
+ nafath(){overlay(`<span class="grab"></span><h2 style="font-size:22px">افتحي تطبيق نفاذ واختاري الرقم</h2><div class="col" style="align-items:center;gap:12px;padding:10px 0"><span style="font-family:var(--display);font-size:72px;font-weight:700;color:var(--navy);background:var(--mist);border-radius:28px;padding:4px 36px">42</span><span class="row" style="font-size:15px;color:var(--muted)" id="nst"><span class="bars" style="color:var(--navy)"><i></i><i></i><i></i><i></i><i></i></span>ننتظر تأكيدك…</span></div>`);say('افتحي تطبيق نفاذ، واختاري الرقم اثنين وأربعين.');
+   setTimeout(()=>{const n=$('#nst');if(!n)return;n.innerHTML=ic.check('#3F5574',20)+'تم التحقق · أهلًا نورة';say('تم التحقق. أهلًا نورة.');setTimeout(()=>{S.login='nafath';S.aq=0;go('about')},1400)},3200)},
+ ask(b){const m=b.querySelector('.pulse')||b;simulateListen(m,()=>{S.planAlt=false;go('plan')})},
+ alt(){S.planAlt=!S.planAlt;go('plan')},
+ go(){Object.assign(S,{fb:null,step:0,checked:false,reported:false,exitRide:false,replanned:false});go('trip')},
+ repeat(){onEnter('trip')},
+ talkTrip(){const st=STEPS[S.step];
+   const cmds=['وش بعده؟','عيد','وين أنا؟','ساعدني','وش هذا الصوت؟','اسكت'].concat(['المشي طويل علي','كلام مو واضح']);
+   overlay(`<span class="grab"></span><h2 style="font-size:22px">قولي لرفيق</h2><p class="sub" style="margin-top:-6px">أوامر بسيطة تشتغل والجوال في جيبك:</p><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${cmds.map(t=>`<button class="opt" data-act="phrase" data-v="${t}" style="min-height:60px;font-size:16px;padding:10px 12px;${t===st.ask?'border-color:var(--sand)':''}">${ic.mic('#3F5574',18)}«${t}»</button>`).join('')}</div><button class="btn" data-act="close" style="background:none;color:var(--navy);min-height:48px">رجوع</button>`);
+   say('قولي: وش بعده، أو عيد، أو ساعدني.',1)},
+ phrase(b){const t=b.dataset.v,st=step();closeOv(true);
+   if(t!=='كلام مو واضح')S.misheard=0;
+   if(t==='المصعد خربان'){go('replan');return}
+   if(t==='ضعت'){openHelp(true);return}
+   if(t==='ساعدني'){openHelp(false);return}
+   if(t==='وش بعده؟'){nextStep();return}
+   if(t==='عيد'){onEnter('trip');schedule();return}
+   if(t==='وين أنا؟'){const nx=STEPS[S.step+1];say((st.place.startsWith('في ')?'أنتِ ':'أنتِ في ')+st.place+'.'+(nx?' الجاي: '+nx.big+'.':''),2);schedule();return}
+   if(t==='وش هذا الصوت؟'){const m=S.lastCue?HAPMEAN[S.lastCue]:null;say(m?'آخر شي كان '+m[0]+'، يعني: '+m[1]+'.':'ما فيه اهتزازة قبل شوي.',2);schedule();return}
+   if(t==='اسكت'){say('بسكت ثلاثين ثانية. قولي عيد إذا تبين التعليمة.',3);setTimeout(()=>{S.hushUntil=Date.now()+30000},2500);toast('رفيق ساكت 30 ثانية · التنبيهات المهمة تشتغل');schedule();return}
+   if(t==='المشي طويل علي'){S.walk=250;say('تمام، خففت المشي لـ مية وخمسين متر. بقترح لك توصيل أكثر.',2);toast('حد المشي صار 250 م');schedule();return}
+   if(t==='كلام مو واضح'){S.misheard=(S.misheard||0)+1;if(S.misheard<2){say('ما سمعتك. قولي: وش بعده، أو عيد، أو ساعدني.',2);schedule()}else{S.misheard=0;say('ما فهمت عليك. أوصلك بمتطوعة تساعدك؟',2);openHelp(false)}return}
+ },
+ replan(){go('replan')},
+ exitride(){S.exitRide=true;go('replan',{nofocus:true});say('طلبت لك سيارة عند المخرج ثلاثة. توصلين سبعة وستة وخمسين.')},
+ report(b){S.reported=b.dataset.v==='1'?'yes':'no';go('replan',{nofocus:true});say(S.reported==='yes'?'أكّدنا للجهة بدون اسمك.':'تمام، ما أرسلنا شي.')},
+ resume(){S.replanned=true;S.step=10;go('trip')},
+ help(){openHelp(false)},
+ lost(){if(S.screen==='checkin')go('trip',{nofocus:true});openHelp(true)},
+ ok(){toast('تمام، كمّلي');if(S.step===10)S.step=11;go('trip',{nofocus:true})},
+ close(){closeOv()},
+ gset(b){S.profile.gender=b.dataset.v||null;A.hgo()},
+ feel(b){const k=b.dataset.v;haptic(k);say(HAPMEAN[k][0]+': '+HAPMEAN[k][1]+'.',3)},
+ pocket(){S.pocket=!S.pocket;go('trip');say(S.pocket?'وضع الجيب. حطي الجوال في جيبك، وأنا أكلمك وأنبهك.':'رجعنا للشاشة.',2)},
+ detail(){S.detail=!S.detail;go('trip',{nofocus:true});toast(S.detail?'بوصف لك المكان حولك بعد':'اتجاهات بسيطة: يمين، يسار، قدام')},
+ fb(b){S.fb=b.dataset.v;go('impact',{nofocus:true});say(S.fb==='yes'?'الحمد لله. شكرًا لك.':'آسفين. قولي وش صار، ونسجّله عشان نحسّن.',2)},
+ hsel(b){S.helpSel=+b.dataset.v;$('#ov .sheet').innerHTML=helpSheet(S.lost)},
+ hgo(){const k=HELP[S.helpSel][0];
+   if(k==='volunteer'&&!S.genderAsked){S.genderAsked=true;$('#ov .sheet').innerHTML=`<span class="grab"></span><h2 style="font-size:24px">أنتِ؟</h2><p class="sub" style="margin-top:-6px">عشان نوصلك بمتطوعة من نفس جنسك. اختياري.</p>${['أنثى','ذكر'].map(g=>`<button class="opt" data-act="gset" data-v="${g}" style="min-height:70px"><span class="ti">${person('#3F5574',28)}</span>${g}</button>`).join('')}<button class="btn" data-act="gset" data-v="" style="background:none;color:var(--navy);min-height:48px">تخطّي</button>`;say('عشان نوصلك بمتطوعة من نفس جنسك: أنثى ولا ذكر؟ أو قولي تخطّي.',2);return}
+   if(k==='replan'){closeOv(true);go('replan');return}
+   if(k==='volunteer'){$('#ov .sheet').innerHTML=`<span class="grab"></span><h2 style="font-size:22px">نوصلك بمتطوعة؟</h2><div class="row" style="background:var(--mist);border-radius:18px;padding:12px 14px;font-size:14px;line-height:1.7;align-items:flex-start">${ic.shield('#3F5574')}<span>نشارك معها نوع المساعدة وموقعك التقريبي بس. نختار متطوعة من نفس جنسك وقريبة، وموثّقة بنفاذ.</span></div><button class="btn btn-pri" data-act="connect">نعم، وصّليني</button><button class="btn" data-act="close" style="background:none;color:var(--navy);min-height:48px">لا</button>`;say('نشارك معها نوع المساعدة وموقعك التقريبي بس. أوصلك؟');return}
+   $('#ov .sheet').innerHTML=`<span class="grab"></span><h2 style="font-size:22px">نطلب موظف المحطة؟</h2><p class="sub">نرسل له موقعك التقريبي داخل المحطة. إذا ما وصل خلال 5 دقائق، نوصلك بمتطوعة قريبة.</p><button class="btn btn-help" data-act="staffok">نعم، اطلبه</button><button class="btn" data-act="close" style="background:none;color:var(--navy);min-height:48px">لا</button>`;say('نطلب موظف المحطة؟')},
+ connect(){$('#ov .sheet').innerHTML=`<span class="grab"></span><div class="col" style="align-items:center;gap:14px;padding:20px 0"><span class="pulse" style="width:84px;height:84px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center">${ic.video('#fff')}</span><h2 style="font-size:22px">ندوّر لك متطوعة…</h2><span class="sub">نفس الجنس · الأقرب · موثّقة</span></div>`;say('ندوّر لك متطوعة.');setTimeout(()=>{go('call');say('ريم معك الحين.')},2600)},
+ endcall(){toast('شكرًا ريم. ساعدتك 3 دقائق');if(S.step===10)S.step=11;go('trip')},
+ staffok(){closeOv();toast('الموظف جاي، تقريبًا 4 دقائق. خليك مكانك');say('الموظف جاي، تقريبًا أربع دقايق. خليك مكانك.')},
+ vaccept(){toast('قبلتي الطلب. نوصلك بالمكالمة الحين');setTimeout(()=>go('call'),900)},
+ rate(b){S.rating=+b.dataset.v;go('impact',{nofocus:true});say('شكرًا، تقييمك يحسّن رحلات الكل.')},
+ homeReset(){Object.assign(S,{step:0,checked:false,rating:0});go('home')},
+};
+function typeSheet(prefill,done){overlay(`<span class="grab"></span><h2 style="font-size:22px">اكتبي، ورفيق ينطقها</h2><div class="field"><span class="col grow"><label for="tt">رسالتك</label><input id="tt" value="${prefill}"></span></div><button class="btn btn-pri" id="ttgo">${ic.spk('#fff',22)}انطقها</button>`);
+  $('#ttgo').onclick=()=>{const v=$('#tt').value;const keep=S.mode;S.mode='voice';say(v);S.mode=keep;setTimeout(done,600)}}
+
+app.addEventListener('click',e=>{const b=e.target.closest('[data-act],[data-go]');if(!b||!app.contains(b))return;
+  if(b.dataset.go){go(b.dataset.go);return}
+  const f=A[b.dataset.act];if(f)f(b)});
+app.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='lf'){S.login='user';S.aq=0;S.heard=null;go('about')}});
+
+/* presenter panel */
+$('#jump').innerHTML=JUMPS.map(([k,l])=>`<button data-j="${k}">${l}</button>`).join('');
+$('#jump').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.j;
+  if(k==='trip')Object.assign(S,{step:2,checked:false,reported:false,exitRide:false,replanned:false});
+  if(k==='about'){S.aq=0;S.heard=null;S.busy=false;if(!S.login)S.login='user'}
+  if(k==='checkin'){S.step=10;S.checked=true}
+  if(k==='impact')S.fb=null;
+  if(k==='replan'){S.step=9;S.reported=false;S.exitRide=false}
+  if(k==='help'){go('trip');openHelp(false)}else go(k);
+  if(innerWidth<=560)$('#panel').classList.remove('open')});
+function sw(id,key,after){const el=$(id);el.setAttribute('aria-checked',S[key]);el.onclick=()=>{S[key]=!S[key];el.setAttribute('aria-checked',S[key]);after&&after()}}
+sw('#swSound','sound',()=>{S.sound=!S.sound;A.sound()});
+sw('#swSR','sr',()=>{S.pocket=S.sr;if(S.screen==='start'||S.screen==='trip')go(S.screen)});
+function syncSound(){$('#swSound').setAttribute('aria-checked',S.sound);app.querySelectorAll('[data-act=sound]').forEach(b=>{const t=document.createElement('div');t.innerHTML=sndOnly(b.dataset.dark==='1');b.replaceWith(t.firstElementChild)})}
+sw('#swAuto','auto',schedule);
+sw('#swBlank','blank',()=>{$('#blank').hidden=!S.blank});
+$('#nextStep').onclick=()=>{if(S.overlay)closeOv(true);nextStep()};
+$('#resetAll').onclick=()=>{Object.assign(S,{aq:0,heard:null,busy:false,login:null,profile:{},step:0,checked:false,reported:false,exitRide:false,replanned:false,rating:0,gender:null,planAlt:false});go('start')};
+try{const r=parseFloat(localStorage.getItem('rafiq-rate'));if(r)S.rate=r}catch(e){}
+$('#rate').value=S.rate||1;$('#rateV').textContent=(+(S.rate||1)).toFixed(2).replace(/0$/,'');
+$('#rate').oninput=e=>{S.rate=+e.target.value;$('#rateV').textContent=S.rate.toFixed(2).replace(/0$/,'');try{localStorage.setItem('rafiq-rate',S.rate)}catch(x){}};
+$('#rate').onchange=()=>say('هذي سرعة رفيق الحين.');
+$('#voiceSel').onchange=e=>{arVoice=voices.find(v=>v.name===e.target.value)||arVoice;try{localStorage.setItem('rafiq-voice',arVoice.name)}catch(x){}showVoiceState();S.sound=true;syncSound();say('أهلًا، أنا رفيق. هذا صوتي الجديد.')};
+$('#testVoice').onclick=()=>{S.sound=true;syncSound();unlockVoice();say('أهلًا، أنا رفيق. إذا تسمعين هذا، الصوت شغال.')};
+if(/demo/.test(location.hash))document.body.classList.add('demo');
+$('#panelBtn').onclick=()=>$('#panel').classList.toggle('open');
+
+try{const ms=navigator.mediaSession;ms.setActionHandler('play',()=>{if(S.screen==='trip')onEnter('trip')});ms.setActionHandler('pause',()=>{if(S.screen==='trip')onEnter('trip')});ms.setActionHandler('nexttrack',()=>{if(S.screen==='trip')nextStep()})}catch(e){}
+const _amic=A.amic,_ask=A.ask,_talk=A.talkTrip;
+A.amic=b=>listen(()=>_amic(b));
+A.ask=b=>listen(()=>_ask(b));
+A.talkTrip=b=>listen(()=>_talk(b));
+A.listen=()=>listen(()=>{if(S.screen==='trip')_talk();else toast('المايك مو متاح في هذا المتصفح. افتحي الرابط من Chrome أو Edge')});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|BUTTON|SELECT|TEXTAREA/.test((document.activeElement||{}).tagName||'')){e.preventDefault();A.listen()}});
+lb().querySelector('button').onclick=()=>{if(D)D.stop().catch(()=>{})};
+go('start');
+})();
+</script>
+
+</body></html>
