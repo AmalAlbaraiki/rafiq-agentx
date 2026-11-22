@@ -1,7 +1,7 @@
 <div dir="rtl">
 
 <p align="center">
-  <img src="media/cover.jpg" alt="رفيق: وكيل ذكاء اصطناعي يرافقك في النقل العام" width="100%">
+  <img src="cover.jpg" alt="رفيق: وكيل ذكاء اصطناعي يرافقك في النقل العام" width="100%">
 </p>
 
 <h1 align="center">رفيق · RAFIQ</h1>
@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <a href="#-جرّب-رفيق"><b>جرّب النموذج</b></a> ·
-  <a href="media/rafiq_demo_90s.mp4"><b>شاهد الديمو (90 ثانية)</b></a> ·
-  <a href="docs/RAFIQ_deck.pptx"><b>العرض التقديمي</b></a>
+  <a href="https://amalalbaraiki.github.io/rafiq-agentx/"><b>جرّب النموذج</b></a> ·
+  <a href="rafiq_demo_90s.mp4"><b>شاهد الديمو (90 ثانية)</b></a> ·
+  <a href="RAFIQ_deck_lite%20%282%29.pptx"><b>العرض التقديمي</b></a>
 </p>
 
 | | |
@@ -164,7 +164,7 @@ flowchart RL
 ## ▶️ جرّب رفيق
 النموذج كامل في ملف واحد: [`index.html`](index.html). ما يحتاج تثبيت ولا خادم.
 
-**أونلاين:** افتح رابط GitHub Pages للمستودع من الجوال أو الكمبيوتر.
+**أونلاين:** [https://amalalbaraiki.github.io/rafiq-agentx/](https://amalalbaraiki.github.io/rafiq-agentx/) من الجوال أو الكمبيوتر.
 
 **محليًا:**
 ```bash
@@ -179,25 +179,12 @@ python3 -m http.server 8000
 - **على الكمبيوتر تظهر «لوحة العرض»:** تنقّل بين المشاهد، وتحكّم بالصوت، وشغّل «الشاشة المطفأة» و«محاكاة قارئ الشاشة».
 
 ### 🎬 الديمو
-[`media/rafiq_demo_90s.mp4`](media/rafiq_demo_90s.mp4): رحلة نورة الكفيفة من البيت إلى الدوام في 90 ثانية، داخل النموذج نفسه وبصوت رفيق.
+[`rafiq_demo_90s.mp4`](rafiq_demo_90s.mp4): رحلة نورة الكفيفة من البيت إلى الدوام في 90 ثانية، داخل النموذج نفسه وبصوت رفيق.
 
 ---
 
 ## ✅ وش بنينا في الجولة الأولى
 نموذج تفاعلي يشتغل فعلًا فيه **12 شاشة**، ويغطي رحلة كاملة من البيت إلى الدوام:
-
-<p align="center">
-  <img src="media/screens/home.png" width="150" alt="الرئيسية">
-  <img src="media/screens/haptics.png" width="150" alt="لغة الاهتزازات">
-  <img src="media/screens/trip.png" width="150" alt="الإرشاد خطوة بخطوة">
-  <img src="media/screens/replan.png" width="150" alt="إعادة التخطيط">
-</p>
-<p align="center">
-  <img src="media/screens/checkin.png" width="150" alt="كل شي تمام؟">
-  <img src="media/screens/help.png" width="150" alt="سلّم المساعدة">
-  <img src="media/screens/volunteer.png" width="150" alt="المتطوعة">
-  <img src="media/screens/impact.png" width="150" alt="بطاقة الأثر">
-</p>
 
 | الشاشة | وش تسوي |
 |---|---|
@@ -227,14 +214,11 @@ python3 -m http.server 8000
 ## 📁 محتويات المستودع
 ```text
 .
-├── index.html                  # النموذج التفاعلي كامل (ملف واحد)
+├── index.html               # النموذج التفاعلي كامل (ملف واحد)
 ├── README.md
-├── docs/
-│   └── RAFIQ_deck.pptx         # العرض التقديمي
-└── media/
-    ├── cover.jpg
-    ├── rafiq_demo_90s.mp4      # فيديو الديمو بصوت رفيق
-    └── screens/                # لقطات من شاشات النموذج
+├── cover.jpg                # الغلاف
+├── rafiq_demo_90s.mp4       # فيديو الديمو بصوت رفيق
+└── RAFIQ_deck_lite (2).pptx # العرض التقديمي
 ```
 
 ---
