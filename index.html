@@ -785,9 +785,9 @@ function go(name,opts={}){
   if(name==='volunteer')requestAnimationFrame(()=>requestAnimationFrame(()=>{const v=$('#vbar');if(v)v.style.width='0%'}));
 }
 function onEnter(n){
-  if(n==='login')say('أهلًا، أنا رفيق. عشان نبدأ، سجّلي دخولك. قولي: نفاذ، أو قولي: اسم المستخدم.');
+  if(n==='login')say('أهلًا، أنا رفيق. في أي وقت تبين تكلّميني، اضغطي مطوّل في أي مكان على الشاشة. عشان نبدأ، سجّلي دخولك: اضغطي مطوّل وقولي نفاذ.');
   if(n==='about'){const Q=ABOUT();if(S.aq>=Q.length)say('تمام، ملفك جاهز: '+Q.map(x=>S.profile[x.k]).filter(Boolean).join('، ')+'. الحين نعلّمك ثلاث اهتزازات. الزر تحت: كمّلي.');else{const q=Q[S.aq];say((S.aq===0?'نتعرّف عليك. ':'')+q.t+' '+(q.hint?q.hint+'. ':'')+'الخيارات: '+q.opts.map(o=>o[0]).join('، ')+'. اختاري، أو قولي جوابك.')}}
-  if(n==='home')say('صباح الخير نورة. تنبيه: مصعد المدخل الشمالي في محطة الربيع معطل، وبنتفاداه ونستخدم المدخل الجنوبي في رحلتك. وين تبين تروحين؟ وفي أي وقت تبين تكلّميني، اضغطي مطوّل في أي مكان على الشاشة.');
+  if(n==='home')say('صباح الخير نورة. تنبيه: مصعد المدخل الشمالي في محطة الربيع معطل، وبنتفاداه ونستخدم المدخل الجنوبي في رحلتك. وين تبين تروحين؟');
   if(n==='plan')say(S.planAlt?'الخيار الثاني: مشي للحافلة، ثم المسار الأصفر. توصلين سبعة وثمانية وخمسين. أمشي بهذي الخطة؟':'توصلين سبعة وخمسين، قبل موعدك بعشر دقائق. توصيل، ثم المسار الأصفر، ثم مشي. ومصعد المدخل الشمالي معطل، فاخترت لك المدخل الجنوبي. أطلب لك التوصيل وأبدأ الرحلة؟ قولي نعم أو لا.');
   if(n==='trip'){const st=step();say(st.big+'. '+st.sub.replaceAll('·','،')+(S.detail&&st.hint?'. '+st.hint:''),2);if(st.agentAlert){const k=S.step;whenSpoken(()=>setTimeout(()=>{if(S.screen==='trip'&&S.step===k&&!S.overlay)go('replan')},700),10000)}}
   if(n==='haptics')say('حسّي الاهتزازات. ثلاث بس: قصيرة يعني انتبهي، اهتزازتين يعني الباب أو المحطة قريب، وطويلة يعني وصلتي. المسي كل وحدة عشان تحسينها.');
@@ -913,7 +913,7 @@ A.listen=()=>listen(()=>{if(S.screen==='trip')_talk();else toast('المايك �
 /* Long-press anywhere = talk to Rafiq (for blind users who can't find the mic button). */
 (function(){let lp=null,fired=false,sx=0,sy=0;
  const cancel=()=>{clearTimeout(lp);lp=null};
- app.addEventListener('pointerdown',e=>{if(S.sr||S.overlay||['start','login'].includes(S.screen))return;fired=false;sx=e.clientX;sy=e.clientY;cancel();
+ app.addEventListener('pointerdown',e=>{if(S.sr||S.overlay||S.screen==='start')return;fired=false;sx=e.clientX;sy=e.clientY;cancel();
   lp=setTimeout(()=>{lp=null;fired=true;try{navigator.vibrate&&navigator.vibrate(60)}catch(_){}A.listen()},650)});
  app.addEventListener('pointermove',e=>{if(lp&&Math.hypot(e.clientX-sx,e.clientY-sy)>14)cancel()});
  ['pointerup','pointercancel','pointerleave'].forEach(t=>app.addEventListener(t,cancel));
